@@ -12,7 +12,6 @@ namespace Assignment_Server.Models
         [Required, Range(1000, 1000000),Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }
         public int View { get; set; }
-        public bool IsCombo { get; set; }
 
         [ForeignKey("Category"),Required]
         public int CategoryID { get; set; }

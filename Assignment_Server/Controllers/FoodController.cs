@@ -24,7 +24,6 @@ namespace Assignment_Server.Controllers
                 {
                     Name = dto.Name,
                     UnitPrice = dto.UnitPrice,
-                    IsCombo = dto.IsCombo,
                     CategoryID = dto.CategoryID,
                     View = 0
                 };
@@ -115,7 +114,6 @@ namespace Assignment_Server.Controllers
                     upFood.Name = foodDTO.Name;
                     upFood.UnitPrice = foodDTO.UnitPrice;
                     upFood.View = foodDTO.View;
-                    upFood.IsCombo = foodDTO.IsCombo;
                     upFood.CategoryID = foodDTO.CategoryID;
 
                     _db.Foods.Update(upFood);

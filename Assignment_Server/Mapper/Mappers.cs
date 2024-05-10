@@ -23,7 +23,6 @@ namespace Assignment_Server.Mapper
                 FoodId = food.FoodId,
                 Name = food.Name,
                 UnitPrice = food.UnitPrice,
-                IsCombo = food.IsCombo,
                 View = food.View,
                 CategoryID = food.CategoryID
             };

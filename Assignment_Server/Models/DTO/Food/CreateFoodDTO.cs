@@ -9,7 +9,6 @@ namespace Assignment_Server.Models.DTO.Food
         public string Name { get; set; }
         [Required, Range(1000, 1000000), Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }
-        public bool IsCombo { get; set; }
 
         [Required]
         public int CategoryID { get; set; }
