@@ -1,6 +1,7 @@
 ﻿using Assignment_Server.Models;
 using Assignment_Server.Models.DTO.Category;
 using Assignment_Server.Models.DTO.Food;
+using Assignment_Server.Models.DTO.User;
 
 namespace Assignment_Server.Mapper
 {
