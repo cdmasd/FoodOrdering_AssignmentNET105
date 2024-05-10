@@ -2,16 +2,122 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="col-2 bg-warning text-center rounded-pill mb-3">
-    <h4 class="text-dark fw-bold" >Combos</h4>
-</div>
-<div class="row">
-    <div class="col-3">
-        <div class="card border-warning wow rollIn" data-wow-delay="0.5s">
-            <img src="https://mms.img.susercontent.com/vn-11134513-7r98o-lsu9wryk8d6s2c" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Bùn bò huế</h5>
+<div class="fs-6 fw-bold text-warning text-center mt-1 wow fadeInUp" data-wow-delay="0">OUR MENU</div>
+<div class="h1 fw-bold text-dark text-center wow fadeInUp" data-wow-delay="0.2s">CHOOSE & ENJOY</div>
+
+<div class="container mt-2">
+    <div class="row g-4">
+        <div class="col wow fadeInUp">
+            <div class="card box-shadow-card">
+                <a asp-action="" class="text-decoration-none text-warning">
+                    <img src="https://placehold.co/300x200" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-center">Cơm chiên</h5>
+                    </div>
+                </a>
             </div>
         </div>
+        <div class="col wow fadeInUp">
+            <div class="card box-shadow-card">
+                <a asp-action="" class="text-decoration-none text-warning">
+                    <img src="https://placehold.co/300x200" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-center">Nui xào</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col wow fadeInUp">
+            <div class="card box-shadow-card">
+                <a asp-action="" class="text-decoration-none text-warning">
+                    <img src="https://placehold.co/300x200" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-center">Mì trộn</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col wow fadeInUp">
+            <div class="card box-shadow-card">
+                <a asp-action="" class="text-decoration-none text-warning">
+                    <img src="https://placehold.co/300x200" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-center">Món Canh</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col wow fadeInUp">
+            <div class="card box-shadow-card">
+                <a asp-action="" class="text-decoration-none text-warning">
+                    <img src="https://placehold.co/300x200" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-center">Combo</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<section id="about" class="wow pulse">
+    <div class="bg-white rounded-5 box-shadow-edit mt-5 py-5">
+        <div class="row justify-content-evenly">
+            <div class="col-md-3">
+                <div class="d-flex d-md-block d-xl-flex justify-content-evenly justify-content-lg-between">
+                    <img src="https://themewagon.github.io/foodwagon/v1.0.0/assets/img/icons/discounts.png" width="100" alt="...">
+                    <div class="d-flex d-lg-block d-xl-flex flex-center">
+                        <h2 class="fw-bolder text-1000 mb-0 text-gradient">Daily<br class="d-none d-md-block">Discounts </h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 hr-vertical">
+                <div class="d-flex d-md-block d-xl-flex justify-content-evenly justify-content-lg-between">
+                    <img src="https://themewagon.github.io/foodwagon/v1.0.0/assets/img/icons/live-tracking.png" width="100" alt="...">
+                    <div class="d-flex d-lg-block d-xl-flex flex-center">
+                        <h2 class="fw-bolder text-1000 mb-0 text-gradient">Live Tracking</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 hr-vertical">
+                <div class="d-flex d-md-block d-xl-flex justify-content-evenly justify-content-lg-between">
+                    <img src="https://themewagon.github.io/foodwagon/v1.0.0/assets/img/icons/quick-delivery.png" width="100" alt="...">
+                    <div class="d-flex d-lg-block d-xl-flex flex-center">
+                        <h2 class="fw-bolder text-1000 mb-0 text-gradient">Quick Delivery </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-5 wow slideInLeft" style="align-content:center;">
+            <div class="h2 fw-bold">
+                Nếu bạn chưa biết <span class="text-warning">ăn gì?</span>
+            </div>
+            <p>Chúng tôi có cơm chiên ba rọi ăn no luôn nè</p>
+        </div>
+        <div class="col-7 wow fadeIn" data-wow-delay=".5s">
+            <img src="https://themewagon.github.io/foodwagon/v1.0.0/assets/img/gallery/crispy-sandwiches.png" class="w-100 rounded-end-3 box-shadow-edit" />
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-7 wow fadeIn" data-wow-delay=".5s">
+            <img src="https://themewagon.github.io/foodwagon/v1.0.0/assets/img/gallery/crispy-sandwiches.png" class="w-100 rounded-start-3 box-shadow-edit" />
+        </div>
+        <div class="col-5 wow slideInRight text-end" style="align-content:center;">
+            <div class="h2 fw-bold">
+                Nếu bạn chưa biết <span class="text-warning">ăn gì?</span>
+            </div>
+            <p>Chúng tôi có cơm chiên ba rọi ăn no luôn nè</p>
+        </div>
+        
     </div>
 </div>

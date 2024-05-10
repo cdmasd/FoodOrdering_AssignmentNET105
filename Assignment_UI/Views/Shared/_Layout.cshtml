@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Assignment_UI.styles.css" asp-append-version="true" />
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="~/css/animate.css" />
 </head>
 <body>
@@ -20,20 +20,28 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarColor03">
-                    <ul class="navbar-nav me-auto">
+                    <ul class="navbar-nav ms-auto me-auto">
                         <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center" href="#"><ion-icon name="fast-food-outline" class="fs-5 pe-1"></ion-icon>Products</a>
+                            <a class="nav-link d-flex align-items-center" href="#"><i class="fa-solid fa-bowl-food me-1"></i>Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center" href="#"><ion-icon name="document-text-outline" class="fs-5 pe-1"></ion-icon>About</a>
+                            <a class="nav-link d-flex align-items-center" href="#about"><i class="fa-solid fa-circle-info me-1"></i>About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center" href="#"><ion-icon name="mail-outline" class="fs-5 pe-1"></ion-icon>Contact</a>
+                            <a class="nav-link d-flex align-items-center" href="#"><i class="fa-solid fa-envelope-circle-check me-1"></i>Contact</a>
                         </li>
+
                     </ul>
                     <div class="d-flex">
-                        <a class="btn btn-primary my-2 my-sm-0 text-secondary me-2" asp-action="">Sign in</a>
-                        <a class="btn btn-outline-warning my-2 my-sm-0" asp-action="">Sign up</a>
+                        <a class="nav-link me-3" href="#"></i>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <span class="fs-6">2</span>
+                        </a>
+                        <a class="nav-link me-3" href="#">
+                            </i>
+                            <i class="fa-solid fa-user"></i>
+                            <span class="fs-6"></span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -69,7 +77,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container text-center">
-            &copy; 2024 - Phan Đức Tiến - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - Phan Đức Tiến - <a class="text-decoration-none text-link" asp-action="Home" asp-action="Privacy">Watch our privacy</a>
         </div>
     </footer>
             <script src="~/js/wow.min.js"></script>

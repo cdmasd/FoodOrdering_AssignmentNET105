@@ -23,6 +23,9 @@ body {
 .box-shadow-edit{
     box-shadow: 0 .2rem 1.75rem rgba(0, 0, 0, .35)
 }
+.box-shadow-card:hover {
+    box-shadow: 0 .2rem .7rem rgba(0, 0, 0, .35)
+}
 .nav-link:focus, .nav-link:hover {
     font-weight : bold;
 }

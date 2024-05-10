@@ -13,6 +13,7 @@ namespace Assignment_Server.Controllers
     {
         private readonly FoodDbContext _db = db;
 
+        #region For Food
         // Tạo sản phẩm mới
         [HttpPost]
         public IActionResult CreateFood([FromBody] CreateFoodDTO dto)
@@ -142,5 +143,36 @@ namespace Assignment_Server.Controllers
             }
             return NotFound();
         }
+        #endregion
+
+        #region For FoodImage
+        // Thêm mới hình ảnh
+        [HttpPost("AddImage")]
+        public IActionResult createImage([FromBody] CreateImageFoodDTO image)
+        {
+            if (ModelState.IsValid)
+            {
+                var foodimg = new FoodImage()
+                {
+                    ImageUrl = image.ImageUrl,
+                    FoodId = image.FoodId
+                };
+                _db.FoodImages.Add(foodimg);
+                _db.SaveChanges();
+                return Ok(new {msg = "Add successfully!", foodimg });
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpGet("SearchImageWithFoodID{foodid:int}")]
+        public IActionResult GetImage([FromRoute]int foodid)
+        {
+            var imgs = _db.FoodImages.Where(x=> x.FoodId == foodid).ToList();
+            if (imgs.Any())
+            {
+                return Ok(imgs);
+            }
+            return NotFound();
+        }
+        #endregion
     }
 }
