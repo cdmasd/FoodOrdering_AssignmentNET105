@@ -23,6 +23,9 @@ builder.Services.AddDbContext<FoodDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FoodDb"));
 });
 
+builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
+builder.Services.AddScoped<IFoodRepo, FoodRepo>();
+builder.Services.AddScoped<IFoodImage, FoodImageRepo>();
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {

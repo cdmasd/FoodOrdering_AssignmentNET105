@@ -1,21 +1,22 @@
 ﻿using Assignment_Server.Data;
+using Assignment_Server.Interfaces;
 using Assignment_Server.Mapper;
 using Assignment_Server.Models;
 using Assignment_Server.Models.DTO.Category;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Assignment_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController(FoodDbContext db) : ControllerBase
+    public class CategoryController(ICategoryRepo db) : ControllerBase
     {
-        private readonly FoodDbContext _db = db;
+        private readonly ICategoryRepo _cateService = db;
 
         // Tạo category mới
+        [Authorize(Roles = "admin")]
         [HttpPost()]
         public IActionResult CreateCategory([FromBody] CreateCategoryDTO category)
         {
@@ -26,9 +27,11 @@ namespace Assignment_Server.Controllers
                     Name = category.Name,
                     ImageUrl = category.ImageUrl
                 };
-                _db.Categories.Add(addCate);
-                _db.SaveChanges();
-                return Ok(new { message = "Created!", obj = addCate.toCategoryDTO() });
+                if(_cateService.CreateCategory(addCate))
+                {
+                    return StatusCode(201, addCate.toCategoryDTO());
+                }
+                return BadRequest("Somethings went wrong");
             }
             return BadRequest(ModelState);
         }
@@ -39,7 +42,7 @@ namespace Assignment_Server.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var categories = _db.Categories.ToList().Select(x => x.toCategoryDTO());
+            var categories = _cateService.GetAll().Select(x => x.toCategoryDTO());
             return Ok(categories);
         }
 
@@ -50,7 +53,7 @@ namespace Assignment_Server.Controllers
         [HttpGet("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
-            var category =  _db.Categories.Find(id);
+            var category =  _cateService.GetById(id);
             if(category != null)
             {
                 return Ok(category.toCategoryDTO());
@@ -62,19 +65,22 @@ namespace Assignment_Server.Controllers
 
 
         // Cập nhật category
+        [Authorize(Roles = "admin")]
         [HttpPut]
         public IActionResult UpdateCategory([FromBody] CategoryDTO category)
         {
-            var Updatecate = _db.Categories.Find(category.CategoryId);
+            var Updatecate = _cateService.GetById(category.CategoryId);
             if (Updatecate != null)
             {
                 if (ModelState.IsValid)
                 {
                     Updatecate.Name = category.Name;
                     Updatecate.ImageUrl = category.ImageUrl;
-                    _db.Categories.Update(Updatecate);
-                    _db.SaveChanges();
-                    return Ok(new { message = "Updated!" , obj = Updatecate.toCategoryDTO()});
+                    if(_cateService.UpdateCategory(Updatecate))
+                    {
+                        return Ok(new { message = "Updated!", obj = Updatecate.toCategoryDTO() });
+                    }
+                    return BadRequest("Somethings went wrong");
                 }
                 return BadRequest(ModelState);
             }
@@ -85,15 +91,13 @@ namespace Assignment_Server.Controllers
 
 
         // Xoá category
+        [Authorize(Roles ="admin")]
         [HttpDelete("{id:int}")]
         public IActionResult DeleteCategory([FromRoute] int id)
         {
-            var delete = _db.Categories.Find(id);
-            if (delete != null)
+            if (_cateService.DeleteCategory(id))
             {
-                _db.Categories.Remove(delete);
-                _db.SaveChanges();
-                return Ok(new { message = "Deleted!", obj = delete.toCategoryDTO() });
+                return Ok(new { message = "Deleted!" });
             }
             return NotFound();
         }

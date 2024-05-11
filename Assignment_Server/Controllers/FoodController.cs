@@ -1,4 +1,5 @@
 ﻿using Assignment_Server.Data;
+using Assignment_Server.Interfaces;
 using Assignment_Server.Mapper;
 using Assignment_Server.Models;
 using Assignment_Server.Models.DTO.Food;
@@ -9,9 +10,10 @@ namespace Assignment_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FoodController(FoodDbContext db) : ControllerBase
+    public class FoodController(IFoodRepo foodService, IFoodImage imageService) : ControllerBase
     {
-        private readonly FoodDbContext _db = db;
+        private readonly IFoodRepo _foodService = foodService;
+        private readonly IFoodImage _imgService = imageService;
 
         #region For Food
         // Tạo sản phẩm mới
@@ -27,9 +29,11 @@ namespace Assignment_Server.Controllers
                     CategoryID = dto.CategoryID,
                     View = 0
                 };
-                _db.Foods.Add(food);
-                _db.SaveChanges();
-                return Ok(new { message = "Created!", obj = food.toFoodDTO() });
+                if(_foodService.CreateFood(food))
+                {
+                    return StatusCode(201, food.toFoodDTO());
+                }
+                return BadRequest("Somethings went wrong ( FoodController line : 31 )");
             }
             return BadRequest(ModelState);
         }
@@ -41,7 +45,7 @@ namespace Assignment_Server.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var foods = _db.Foods.ToList().Select(x => x.toFoodDTO());
+            var foods = _foodService.GetAllFood().Select(x=> x.toFoodDTO());
             return Ok(foods);
         }
 
@@ -53,13 +57,14 @@ namespace Assignment_Server.Controllers
         public IActionResult GetById([FromRoute] int id)
         {
 
-            var getFood = _db.Foods.Find(id);
+            var getFood = _foodService.GetById(id);
             if (getFood != null)
             {
                 getFood.View++;
-                _db.Foods.Update(getFood);
-                _db.SaveChanges();
-                return Ok(getFood.toFoodDTO());
+                if (_foodService.UpdateFood(getFood))
+                {
+                    return Ok(getFood.toFoodDTO());
+                }
             }
             return NotFound();
         }
@@ -71,8 +76,8 @@ namespace Assignment_Server.Controllers
         [HttpGet("{searchName}")]
         public IActionResult SearchByName([FromRoute] string searchName)
         {
-            var search = _db.Foods.Where(x => x.Name.Contains(searchName)).ToList();
-            if (search.Count > 0)
+            var search = _foodService.SearchByName(searchName);
+            if (search.Any())
             {
                 return Ok(search.Select(x => x.toFoodDTO()));
             }
@@ -84,18 +89,9 @@ namespace Assignment_Server.Controllers
 
         // Tìm kiếm theo filter
         [HttpGet("getByFilter")]
-        public IActionResult getByFilter([FromQuery]decimal? priceRange, [FromQuery] int? categoryId)
+        public IActionResult GetByFilter([FromQuery]decimal? priceRange, [FromQuery] int? categoryId)
         {
-            var foods = _db.Foods.AsQueryable();
-            if (priceRange.HasValue)
-            {
-                foods = foods.Where(x => x.UnitPrice <  priceRange.Value);
-            }
-            if(categoryId.HasValue)
-            {
-                foods = foods.Where(x => x.CategoryID ==  categoryId.Value);
-            }
-            var filteredFoods = foods.ToList();
+            var filteredFoods = _foodService.getByFilter(priceRange, categoryId);
             return Ok(filteredFoods.Select(x => x.toFoodDTO()));
         }
 
@@ -106,7 +102,7 @@ namespace Assignment_Server.Controllers
         [HttpPut]
         public IActionResult UpdateFood([FromBody]FoodDTO foodDTO)
         {
-            var upFood = _db.Foods.Find(foodDTO.FoodId);
+            var upFood = _foodService.GetById(foodDTO.FoodId);
             if (upFood != null)
             {
                 if (ModelState.IsValid)
@@ -116,9 +112,10 @@ namespace Assignment_Server.Controllers
                     upFood.View = foodDTO.View;
                     upFood.CategoryID = foodDTO.CategoryID;
 
-                    _db.Foods.Update(upFood);
-                    _db.SaveChanges();
-                    return Ok(new {message = "Updated!" , obj = upFood.toFoodDTO()});
+                    if (_foodService.UpdateFood(upFood))
+                    {
+                        return Ok(new { message = "Updated!", obj = upFood.toFoodDTO() });
+                    }
                 }
                 return BadRequest(ModelState);
             }
@@ -132,12 +129,9 @@ namespace Assignment_Server.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult DeleteFood([FromRoute]int id)
         {
-            var delete = _db.Foods.Find(id);
-            if (delete != null)
+            if (_foodService.DeleteFood(id))
             {
-                _db.Foods.Remove(delete);
-                _db.SaveChanges();
-                return Ok(new { message = "Deleted!" , obj = delete.toFoodDTO()});
+                return Ok(new { message = "Deleted!"});
             }
             return NotFound();
         }
@@ -155,16 +149,17 @@ namespace Assignment_Server.Controllers
                     ImageUrl = image.ImageUrl,
                     FoodId = image.FoodId
                 };
-                _db.FoodImages.Add(foodimg);
-                _db.SaveChanges();
-                return Ok(new {msg = "Add successfully!", foodimg });
+                if (_imgService.CreateFoodImage(foodimg))
+                {
+                    return StatusCode(201, foodimg);
+                }        
             }
             return BadRequest(ModelState);
         }
         [HttpGet("SearchImageWithFoodID{foodid:int}")]
         public IActionResult GetImage([FromRoute]int foodid)
         {
-            var imgs = _db.FoodImages.Where(x=> x.FoodId == foodid).ToList();
+            var imgs = _imgService.GetFoodImages(foodid);
             if (imgs.Any())
             {
                 return Ok(imgs);
