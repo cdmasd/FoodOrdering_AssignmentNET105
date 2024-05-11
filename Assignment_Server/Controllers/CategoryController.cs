@@ -2,6 +2,7 @@
 using Assignment_Server.Mapper;
 using Assignment_Server.Models;
 using Assignment_Server.Models.DTO.Category;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,7 @@ namespace Assignment_Server.Controllers
 
 
 
-
+        
         // Tìm kiếm category theo id
         [HttpGet("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
