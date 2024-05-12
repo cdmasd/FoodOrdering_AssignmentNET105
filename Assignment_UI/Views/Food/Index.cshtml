@@ -1,0 +1,67 @@
+﻿@{
+    ViewData["title"] = "Products";
+}
+<div class="row mb-3">
+    <div class="col">
+        <form asp-action="Filter">
+            <div class="d-flex">
+                <select class="form-select me-3" style="width:100px;">
+                    <option value="0" hidden>Price</option>
+                    <option value="a">a</option>
+                    <option value="b">b</option>
+                    <option value="c">c</option>
+                </select>
+                <select class="form-select me-3" style="width:200px;">
+                    <option value="0" hidden>Category</option>
+                    <option value="e">Canh chua cá lóc</option>
+                    <option value="f">Canh hầm xương</option>
+                    <option value="g">g</option>
+                </select>
+                <button class="btn btn-primary" type="submit">Filter</button>
+            </div>
+        </form>
+    </div>
+    <div class="col">
+        <form asp-action="Filter">
+            <div class="d-flex">
+                <input type="text" name="query" placeholder="Search by name" class="form-control me-3" />
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-2">
+        <div class="card">
+            <div class="card-header bg-warning text-center h5">Category</div>
+            <a asp-action="getCategory" asp-route-id="itemid" class="text-decoration-none text-dark">
+                <div class="list-group p-2">
+                    <div class="row">
+                        <div class="col-6 text-start">ABC</div>
+                        <div class="col-6 text-end rounded-pill">3</div>
+                    </div>
+                </div>
+            </a>
+            <a asp-action="getCategory" class="text-decoration-none text-dark">
+                <div class="list-group p-2">
+                    <div class="row">
+                        <div class="col-6 text-start">ABC</div>
+                        <div class="col-6 text-end rounded-pill">3</div>
+                    </div>
+                </div>
+            </a>
+            <a asp-action="getCategory" class="text-decoration-none text-dark">
+                <div class="list-group p-2">
+                    <div class="row">
+                        <div class="col-6 text-start">ABC</div>
+                        <div class="col-6 text-end rounded-pill">3</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-10">
+        @Html.Partial("_ShowProduct");
+    </div>
+</div>
+

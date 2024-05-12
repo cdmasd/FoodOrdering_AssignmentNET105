@@ -1,3 +1,4 @@
+
 html {
   font-size: 14px;
 }
@@ -25,6 +26,9 @@ body {
 }
 .box-shadow-card:hover {
     box-shadow: 0 .2rem .7rem rgba(0, 0, 0, .35)
+}
+.nav-link {
+    color: #f4bd61 !important;
 }
 .nav-link:focus, .nav-link:hover {
     font-weight : bold;

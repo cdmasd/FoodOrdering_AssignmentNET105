@@ -156,7 +156,7 @@ namespace Assignment_Server.Controllers
             }
             return BadRequest(ModelState);
         }
-        [HttpGet("SearchImageWithFoodID{foodid:int}")]
+        [HttpGet("GetImages{foodid:int}")]
         public IActionResult GetImage([FromRoute]int foodid)
         {
             var imgs = _imgService.GetFoodImages(foodid);
