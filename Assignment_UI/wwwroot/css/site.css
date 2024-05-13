@@ -30,9 +30,10 @@ body {
 .nav-link {
     color: #f4bd61 !important;
 }
-.nav-link:focus, .nav-link:hover {
-    font-weight : bold;
-}
+    .nav-link:focus, .nav-link:hover {
+        font-weight: bold;
+        color: #383636 !important;
+    }
 .carousel-item {
     transition: transform 1s ease, opacity .5s ease-out;
 }

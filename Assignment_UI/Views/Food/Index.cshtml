@@ -17,7 +17,7 @@
                     <option value="f">Canh hầm xương</option>
                     <option value="g">g</option>
                 </select>
-                <button class="btn btn-primary" type="submit">Filter</button>
+                <button class="btn btn-warning text-dark" type="submit">Filter</button>
             </div>
         </form>
     </div>
@@ -25,42 +25,43 @@
         <form asp-action="Filter">
             <div class="d-flex">
                 <input type="text" name="query" placeholder="Search by name" class="form-control me-3" />
-                <button class="btn btn-primary" type="submit">Search</button>
+                <button class="btn btn-warning text-dark" type="submit">Search</button>
             </div>
         </form>
     </div>
 </div>
 <div class="row">
-    <div class="col-2">
-        <div class="card">
-            <div class="card-header bg-warning text-center h5">Category</div>
-            <a asp-action="getCategory" asp-route-id="itemid" class="text-decoration-none text-dark">
-                <div class="list-group p-2">
-                    <div class="row">
-                        <div class="col-6 text-start">ABC</div>
-                        <div class="col-6 text-end rounded-pill">3</div>
-                    </div>
+    <!-- Category Menu -->
+    <div class="col-3">
+        <div class="card shadow">
+            <div class="card-header bg-warning h4 text-center text-dark">
+                <div class="p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 2 16 16">
+                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+                    </svg>
+                    Category
                 </div>
-            </a>
-            <a asp-action="getCategory" class="text-decoration-none text-dark">
-                <div class="list-group p-2">
-                    <div class="row">
-                        <div class="col-6 text-start">ABC</div>
-                        <div class="col-6 text-end rounded-pill">3</div>
-                    </div>
-                </div>
-            </a>
-            <a asp-action="getCategory" class="text-decoration-none text-dark">
-                <div class="list-group p-2">
-                    <div class="row">
-                        <div class="col-6 text-start">ABC</div>
-                        <div class="col-6 text-end rounded-pill">3</div>
-                    </div>
-                </div>
-            </a>
+            </div>
+            <div class="card-body">
+                @foreach (var item in Model)
+                {
+                    <a class="text-decoration-none" asp-controller="Product" asp-action="FilterLoai">
+                        <div class="row py-2">
+                            <div class="col-10 text-dark">
+                                ABC
+                            </div>
+                            <div class="col-2 text-end">
+                                <span class="badge bg-warning badge-pill text-dark">
+                                    03
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
         </div>
     </div>
-    <div class="col-10">
+    <div class="col-9">
         @Html.Partial("_ShowProduct");
     </div>
 </div>
