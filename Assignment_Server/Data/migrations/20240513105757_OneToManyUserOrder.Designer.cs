@@ -4,6 +4,7 @@ using Assignment_Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Assignment_Server.Data.migrations
 {
     [DbContext(typeof(FoodDbContext))]
-    partial class FoodDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240513105757_OneToManyUserOrder")]
+    partial class OneToManyUserOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -188,38 +191,6 @@ namespace Assignment_Server.Data.migrations
                     b.ToTable("Order");
                 });
 
-            modelBuilder.Entity("Assignment_Server.Models.OrderDetail", b =>
-                {
-                    b.Property<int>("OrderDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"));
-
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FoodId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("OrderDetailId");
-
-                    b.HasIndex("FoodId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderDetail");
-                });
-
             modelBuilder.Entity("Assignment_Server.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -324,13 +295,13 @@ namespace Assignment_Server.Data.migrations
                     b.HasData(
                         new
                         {
-                            Id = "e23240ee-d038-4623-8610-9203e30bd7a2",
+                            Id = "c161a566-c69c-43ae-ab44-451c968d7882",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "9dde65b7-2fe9-4044-a89d-2780e2931601",
+                            Id = "83138c5b-cf47-46b2-97d5-a02d75686c70",
                             Name = "customer",
                             NormalizedName = "CUSTOMER"
                         });
@@ -505,25 +476,6 @@ namespace Assignment_Server.Data.migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Assignment_Server.Models.OrderDetail", b =>
-                {
-                    b.HasOne("Assignment_Server.Models.Food", "Food")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("FoodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Assignment_Server.Models.Order", "Order")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Food");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -590,13 +542,6 @@ namespace Assignment_Server.Data.migrations
                     b.Navigation("CartDetails");
 
                     b.Navigation("FoodImages");
-
-                    b.Navigation("OrderDetails");
-                });
-
-            modelBuilder.Entity("Assignment_Server.Models.Order", b =>
-                {
-                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("Assignment_Server.Models.User", b =>

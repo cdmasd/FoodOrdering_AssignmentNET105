@@ -100,7 +100,7 @@ namespace Assignment_Server.Controllers
 
         // Lấy sản phẩm theo mã danh mục
         [HttpGet("SearchCategoryId= {categoryId:int}")]
-        public IActionResult GetByCategory([FromRoute]int categoryId)
+        public IActionResult GetByCategoryID([FromRoute]int categoryId)
         {
             var foods = _foodService.getByCategoryID(categoryId);
             if (foods.Any())

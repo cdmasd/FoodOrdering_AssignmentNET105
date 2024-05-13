@@ -4,6 +4,7 @@ using Assignment_Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Assignment_Server.Data.migrations
 {
     [DbContext(typeof(FoodDbContext))]
-    partial class FoodDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240513103842_CartDetailsandCart")]
+    partial class CartDetailsandCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,15 +33,7 @@ namespace Assignment_Server.Data.migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("CartId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Cart");
                 });
@@ -135,89 +130,6 @@ namespace Assignment_Server.Data.migrations
                     b.HasIndex("FoodId");
 
                     b.ToTable("FoodImages");
-                });
-
-            modelBuilder.Entity("Assignment_Server.Models.Order", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ReceviedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Order");
-                });
-
-            modelBuilder.Entity("Assignment_Server.Models.OrderDetail", b =>
-                {
-                    b.Property<int>("OrderDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"));
-
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FoodId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("OrderDetailId");
-
-                    b.HasIndex("FoodId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderDetail");
                 });
 
             modelBuilder.Entity("Assignment_Server.Models.User", b =>
@@ -324,13 +236,13 @@ namespace Assignment_Server.Data.migrations
                     b.HasData(
                         new
                         {
-                            Id = "e23240ee-d038-4623-8610-9203e30bd7a2",
+                            Id = "548091d2-1558-441d-9878-2f910b842859",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "9dde65b7-2fe9-4044-a89d-2780e2931601",
+                            Id = "bf5db2a8-24da-44dc-86b6-7cb44c7fbf8b",
                             Name = "customer",
                             NormalizedName = "CUSTOMER"
                         });
@@ -442,17 +354,6 @@ namespace Assignment_Server.Data.migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Assignment_Server.Models.Cart", b =>
-                {
-                    b.HasOne("Assignment_Server.Models.User", "User")
-                        .WithOne("Cart")
-                        .HasForeignKey("Assignment_Server.Models.Cart", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Assignment_Server.Models.CartDetail", b =>
                 {
                     b.HasOne("Assignment_Server.Models.Cart", "Cart")
@@ -492,36 +393,6 @@ namespace Assignment_Server.Data.migrations
                         .IsRequired();
 
                     b.Navigation("Food");
-                });
-
-            modelBuilder.Entity("Assignment_Server.Models.Order", b =>
-                {
-                    b.HasOne("Assignment_Server.Models.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Assignment_Server.Models.OrderDetail", b =>
-                {
-                    b.HasOne("Assignment_Server.Models.Food", "Food")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("FoodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Assignment_Server.Models.Order", "Order")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Food");
-
-                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -590,21 +461,6 @@ namespace Assignment_Server.Data.migrations
                     b.Navigation("CartDetails");
 
                     b.Navigation("FoodImages");
-
-                    b.Navigation("OrderDetails");
-                });
-
-            modelBuilder.Entity("Assignment_Server.Models.Order", b =>
-                {
-                    b.Navigation("OrderDetails");
-                });
-
-            modelBuilder.Entity("Assignment_Server.Models.User", b =>
-                {
-                    b.Navigation("Cart")
-                        .IsRequired();
-
-                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,8 +15,11 @@ namespace Assignment_Server.Models
 
         [ForeignKey("Category"),Required]
         public int CategoryID { get; set; }
-        public virtual Category Category { get; set; }
 
+        // Navigation
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual Category Category { get; set; }
+        public virtual ICollection<CartDetail> CartDetails { get; set; }
         public virtual ICollection<FoodImage> FoodImages { get; set; }
     }
 }
