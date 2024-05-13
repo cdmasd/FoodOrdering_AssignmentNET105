@@ -53,7 +53,7 @@ namespace Assignment_Server.Controllers
 
 
         // Tìm sản phẩm theo id
-        [HttpGet("{id:int}")]
+        [HttpGet("searchID={id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
 
@@ -73,7 +73,7 @@ namespace Assignment_Server.Controllers
 
 
         // Tìm kiếm theo tên
-        [HttpGet("{searchName}")]
+        [HttpGet("SearchName={searchName}")]
         public IActionResult SearchByName([FromRoute] string searchName)
         {
             var search = _foodService.SearchByName(searchName);
@@ -94,6 +94,20 @@ namespace Assignment_Server.Controllers
             var filteredFoods = _foodService.getByFilter(priceRange, categoryId);
             return Ok(filteredFoods.Select(x => x.toFoodDTO()));
         }
+
+
+
+
+        // Lấy sản phẩm theo mã danh mục
+        [HttpGet("SearchCategoryId= {categoryId:int}")]
+        public IActionResult GetByCategory([FromRoute]int categoryId)
+        {
+            var foods = _foodService.getByCategoryID(categoryId);
+            if (foods.Any())
+                return Ok(foods.Select(x => x.toFoodDTO()));
+            return NotFound();
+        }
+
 
 
 

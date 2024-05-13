@@ -12,5 +12,6 @@ namespace Assignment_Server.Interfaces
         Food GetById(int id);
         IEnumerable<Food> SearchByName(string name);
         IEnumerable<Food> getByFilter(decimal? priceRange, int? categoryId);
+        IEnumerable<Food> getByCategoryID(int categoryId);
     }
 }

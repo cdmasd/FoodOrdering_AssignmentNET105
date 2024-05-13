@@ -33,6 +33,12 @@ namespace Assignment_Server.Services
             return _db.Foods.ToList();
         }
 
+        public IEnumerable<Food> getByCategoryID(int categoryId)
+        {
+            var foods = _db.Foods.Where(x=> x.CategoryID == categoryId).ToList();
+            return foods;
+        }
+
         public IEnumerable<Food> getByFilter(decimal? priceRange, int? categoryId)
         {
             var foods = _db.Foods.AsQueryable();
