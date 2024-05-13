@@ -5,9 +5,7 @@ namespace Assignment_UI.Controllers
 {
     public class FoodController : Controller
     {
-        public IActionResult Index()
-        {
-            var foods = new List<Food>()
+        public List<Food> foods = new List<Food>()
             {
                 new Food {FoodId = 1, CategoryId = 1, Name = "Cơm xào tỏi", UnitPrice = 54000, View = 0},
                 new Food {FoodId = 2, CategoryId = 2, Name = "Cơm xào dưa", UnitPrice = 54000, View = 0},
@@ -18,7 +16,18 @@ namespace Assignment_UI.Controllers
                 new Food {FoodId = 7, CategoryId = 3, Name = "Nui xào tỏi", UnitPrice = 54000, View = 0},
                 new Food {FoodId = 8, CategoryId = 4, Name = "Nui xào ớt", UnitPrice = 54000, View = 0}
             };
+        public IActionResult Index()
+        {
+            
             return View(foods);
+        }
+
+        public IActionResult Details(int id)
+        {
+            var food = foods.SingleOrDefault(x=> x.FoodId == id);
+            if(food  == null)
+                return NotFound();
+            return View(food);
         }
     }
 }

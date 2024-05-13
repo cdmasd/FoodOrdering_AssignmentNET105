@@ -4,7 +4,7 @@
     {
         <div class="col-4">
             <div class="card mb-3 shadow">
-                <a asp-controller="Product" asp-action="Details" asp-route-id="@item.FoodId">
+                <a asp-controller="Food" asp-action="Details" asp-route-id="@item.FoodId">
                     <img src="https://placehold.co/300x300" width="100%" height="100%" />
                 </a>
                 <div class="card-body fw-bolder">
@@ -15,7 +15,7 @@
                 <div class="card-footer">
                     <div class="d-flex justify-content-between align-items-center">
                         @item.UnitPrice.ToString("#,##")đ
-                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.FoodId" class="btn btn-sm btn-warning rounded-2 text-dark">View Details</a>
+                        <a asp-controller="Food" asp-action="Details" asp-route-id="@item.FoodId" class="btn btn-sm btn-warning rounded-2 text-dark">View Details</a>
                     </div>
                 </div>
             </div>
