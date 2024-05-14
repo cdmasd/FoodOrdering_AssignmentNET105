@@ -63,7 +63,12 @@ namespace Assignment_Server.Controllers
                 getFood.View++;
                 if (_foodService.UpdateFood(getFood))
                 {
-                    return Ok(getFood.toFoodDTO());
+                    var Foods = new FoodAndImageDTO()
+                    {
+                        food = getFood.toFoodDTO(),
+                        images = _imgService.GetFoodImages(getFood.FoodId).ToList()
+                    };
+                    return Ok(Foods);
                 }
             }
             return NotFound();

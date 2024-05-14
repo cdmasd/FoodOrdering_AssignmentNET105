@@ -1,0 +1,43 @@
+﻿@model IEnumerable<CartDetail>
+@{
+    ViewData["title"] = "Cart Details";
+}
+@if (Model.Any())
+{
+    <table class="table table-hover table-bordered">
+        <thead class="table-primary text-center">
+            <tr>
+                <th>Name</th>
+                <th>UnitPrice</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td class="d-flex">
+                        <img src="@item.Food.images[0].ToString()" />
+                        <div class="px-3 align-middle">@item.Food.Food.Name</div>
+                    </td>
+                    <td>@item.Food.Food.UnitPrice</td>
+                    <td>
+                        <input type="number" class="form-control text-center" value="@item.Quantity" readonly />
+                    </td>
+                    <td>@item.Total</td>
+                    <td>
+                        <a asp-action="Remove" class="btn btn-danger">Remove</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<div class="row">
+    <div class="col-6 text-center">Total pay : @Model.Sum(x=> x.Total)</div>
+    <div class="col-6 text-center">
+        <a asp-action="" class="btn btn-success">Payment -></a>
+    </div>
+</div>
