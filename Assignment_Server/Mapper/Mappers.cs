@@ -23,6 +23,7 @@ namespace Assignment_Server.Mapper
             {
                 FoodId = food.FoodId,
                 Name = food.Name,
+                mainImage = food.mainImage,
                 UnitPrice = food.UnitPrice,
                 View = food.View,
                 CategoryID = food.CategoryID

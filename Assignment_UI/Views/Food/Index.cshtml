@@ -1,68 +1,27 @@
-﻿@{
-    ViewData["title"] = "Products";
-}
-<div class="row mb-3">
-    <div class="col">
-        <form asp-action="Filter">
-            <div class="d-flex">
-                <select class="form-select me-3" style="width:100px;">
-                    <option value="0" hidden>Price</option>
-                    <option value="a">a</option>
-                    <option value="b">b</option>
-                    <option value="c">c</option>
-                </select>
-                <select class="form-select me-3" style="width:200px;">
-                    <option value="0" hidden>Category</option>
-                    <option value="e">Canh chua cá lóc</option>
-                    <option value="f">Canh hầm xương</option>
-                    <option value="g">g</option>
-                </select>
-                <button class="btn btn-warning text-dark" type="submit">Filter</button>
-            </div>
-        </form>
-    </div>
-    <div class="col">
-        <form asp-action="Filter">
-            <div class="d-flex">
-                <input type="text" name="query" placeholder="Search by name" class="form-control me-3" />
-                <button class="btn btn-warning text-dark" type="submit">Search</button>
-            </div>
-        </form>
-    </div>
-</div>
-<div class="row">
-    <!-- Category Menu -->
-    <div class="col-3">
-        <div class="card shadow">
-            <div class="card-header bg-warning h4 text-center text-dark">
-                <div class="p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 2 16 16">
-                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
-                    </svg>
-                    Category
-                </div>
-            </div>
-            <div class="card-body">
-                @foreach (var item in Model)
-                {
-                    <a class="text-decoration-none" asp-controller="Product" asp-action="FilterLoai">
-                        <div class="row py-2">
-                            <div class="col-10 text-dark">
-                                ABC
-                            </div>
-                            <div class="col-2 text-end">
-                                <span class="badge bg-warning badge-pill text-dark">
-                                    03
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                }
-            </div>
-        </div>
-    </div>
-    <div class="col-9">
-        @Html.Partial("_ShowProduct");
-    </div>
-</div>
+﻿@model Assignment_UI.ViewModel.ProductVM;
 
+@{
+    Layout = "ListFood";
+}
+
+@await Html.PartialAsync("_ShowProduct")
+<div>
+    Trang @(Model.pageNumber) / @(Model.pageCount)
+</div>
+<div class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item @(Model.pageNumber == 1 ? "disabled": "")">
+            <a class="page-link" asp-controller="Food" asp-action="Index" asp-route-page="@(Model.pageNumber - 1)"> Previous </a>
+        </li>
+        @for (var pg = 1; pg <= Model.pageCount; pg++)
+        {
+            <li class="page-item @(pg == Model.pageNumber ? "active" :"")">
+                <a class="page-link" asp-controller="Food" asp-action="Index" asp-route-page="@pg"> @pg </a>
+            </li>
+        }
+        <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled": "")">
+            <a class="page-link" asp-controller="Food" asp-action="Index" asp-route-page="@(Model.pageNumber + 1)"> Next </a>
+        </li>
+    </ul>
+
+</div>

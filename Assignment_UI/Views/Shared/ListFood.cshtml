@@ -1,0 +1,45 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["title"] = "Foods";
+}
+<!-- Filter -->
+<div class="row mb-3">
+    <div class="col">
+        <form asp-action="Filter">
+            <div class="d-flex">
+                <select class="form-select me-3" style="width:100px;">
+                    <option value="0" hidden>Price</option>
+                    <option value="a">a</option>
+                    <option value="b">b</option>
+                    <option value="c">c</option>
+                </select>
+                <select class="form-select me-3" style="width:200px;">
+                    <option value="0" hidden>Category</option>
+                    <option value="e">Canh chua cá lóc</option>
+                    <option value="f">Canh hầm xương</option>
+                    <option value="g">g</option>
+                </select>
+                <button class="btn btn-warning text-dark" type="submit">Filter</button>
+            </div>
+        </form>
+    </div>
+    <div class="col">
+        <form asp-controller="Food" asp-action="SearchName">
+            <div class="d-flex">
+                <input type="text" name="query" placeholder="Search by name" class="form-control me-3" />
+                <button class="btn btn-warning text-dark" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Category Menu -->
+    @await Component.InvokeAsync("CategoryCount")
+    <!-- Product List -->
+    <div class="col-9">
+        <div class="row">
+            @RenderBody()
+        </div>
+    </div>
+</div>

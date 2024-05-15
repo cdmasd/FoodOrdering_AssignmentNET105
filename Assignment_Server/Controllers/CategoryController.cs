@@ -2,6 +2,7 @@
 using Assignment_Server.Interfaces;
 using Assignment_Server.Mapper;
 using Assignment_Server.Models;
+using Assignment_Server.Models.DTO;
 using Assignment_Server.Models.DTO.Category;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,9 +12,10 @@ namespace Assignment_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController(ICategoryRepo db) : ControllerBase
+    public class CategoryController(ICategoryRepo db, IFoodRepo foodService) : ControllerBase
     {
         private readonly ICategoryRepo _cateService = db;
+        private readonly IFoodRepo _foodService = foodService;
 
         // Tạo category mới
         [Authorize(Roles = "admin")]
@@ -100,6 +102,21 @@ namespace Assignment_Server.Controllers
                 return Ok(new { message = "Deleted!" });
             }
             return NotFound();
+        }
+
+
+
+        // Số lượng sản phẩm của mỗi category
+        [HttpGet("CategoryMenu")]
+        public IActionResult GetFoods()
+        {
+            var foods = _foodService.GetAllFood().GroupBy(x => x.CategoryID).Select(c => new CategoryCount()
+            {
+                CategoryId = c.Key,
+                Name = _cateService.GetById(c.Key).Name,
+                Quantity = c.Count()
+            });
+            return Ok(foods);
         }
     }
 }

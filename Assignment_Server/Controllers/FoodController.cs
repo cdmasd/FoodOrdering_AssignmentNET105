@@ -2,9 +2,11 @@
 using Assignment_Server.Interfaces;
 using Assignment_Server.Mapper;
 using Assignment_Server.Models;
+using Assignment_Server.Models.DTO;
 using Assignment_Server.Models.DTO.Food;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using X.PagedList;
 
 namespace Assignment_Server.Controllers
 {
@@ -27,6 +29,7 @@ namespace Assignment_Server.Controllers
                     Name = dto.Name,
                     UnitPrice = dto.UnitPrice,
                     CategoryID = dto.CategoryID,
+                    mainImage = dto.mainImage,
                     View = 0
                 };
                 if(_foodService.CreateFood(food))
@@ -43,17 +46,18 @@ namespace Assignment_Server.Controllers
 
         // Hiển thị tất cả sản phẩm
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(int? page)
         {
             var foods = _foodService.GetAllFood().Select(x=> x.toFoodDTO());
-            return Ok(foods);
+            var pageSize = 9;
+            int pageNumber = (page ?? 1);
+            return Ok(foods.ToPagedList(pageNumber,pageSize));
         }
 
 
-
-
+ 
         // Tìm sản phẩm theo id
-        [HttpGet("searchID={id:int}")]
+        [HttpGet("searchID{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
 
@@ -78,7 +82,7 @@ namespace Assignment_Server.Controllers
 
 
         // Tìm kiếm theo tên
-        [HttpGet("SearchName={searchName}")]
+        [HttpGet("SearchName{searchName}")]
         public IActionResult SearchByName([FromRoute] string searchName)
         {
             var search = _foodService.SearchByName(searchName);
@@ -104,7 +108,7 @@ namespace Assignment_Server.Controllers
 
 
         // Lấy sản phẩm theo mã danh mục
-        [HttpGet("SearchCategoryId= {categoryId:int}")]
+        [HttpGet("SearchCategoryId{categoryId:int}")]
         public IActionResult GetByCategoryID([FromRoute]int categoryId)
         {
             var foods = _foodService.getByCategoryID(categoryId);
