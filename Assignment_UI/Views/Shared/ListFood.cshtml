@@ -3,21 +3,29 @@
     ViewData["title"] = "Foods";
 }
 <!-- Filter -->
-<div class="row mb-3">
+<div class="row mb-4">
     <div class="col">
-        <form asp-action="Filter">
+        <form asp-controller="Food" asp-action="Sort">
             <div class="d-flex">
-                <select class="form-select me-3" style="width:100px;">
-                    <option value="0" hidden>Price</option>
-                    <option value="a">a</option>
-                    <option value="b">b</option>
-                    <option value="c">c</option>
+                <select class="form-select me-3 text-center" style="width:200px;" name="sort">
+                    <option value="0">Price Sort</option>
+                    <option value="asc"> Ascending</option>
+                    <option value="desc"> Descending</option>
                 </select>
-                <select class="form-select me-3" style="width:200px;">
-                    <option value="0" hidden>Category</option>
-                    <option value="e">Canh chua cá lóc</option>
-                    <option value="f">Canh hầm xương</option>
-                    <option value="g">g</option>
+                <button class="btn btn-warning text-dark" type="submit">Sort</button>
+            </div>
+        </form>
+    </div>
+    <div class="col">
+        <form asp-controller="Food" asp-action="Filter">
+            <div class="d-flex">
+                <select class="form-select me-3 text-center" style="width:200px;" name="value">
+                    <option value="0">Price</option>
+                    <option value="1"> Dưới 16.000</option>
+                    <option value="2"> 16.000 - 30.000</option>
+                    <option value="3"> 30.000 - 60.000</option>
+                    <option value="4"> 60.000 - 100.000</option>
+                    <option value="5"> Trên 100.000</option>
                 </select>
                 <button class="btn btn-warning text-dark" type="submit">Filter</button>
             </div>

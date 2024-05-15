@@ -1,0 +1,25 @@
+﻿@model Assignment_UI.ViewModel.ProductVM
+@{
+    Layout = "ListFood";
+}
+@await Html.PartialAsync("_ShowProduct")
+<div>
+    Trang @(Model.pageNumber) / @(Model.pageCount)
+</div>
+<div class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item @(Model.pageNumber == 1 ? "disabled": "")">
+            <a class="page-link" asp-controller="Food" asp-action="Sort" asp-route-page="@(Model.pageNumber - 1)" asp-route-sort="@ViewBag.Sort"> Previous </a>
+        </li>
+        @for (var pg = 1; pg <= Model.pageCount; pg++)
+        {
+            <li class="page-item @(pg == Model.pageNumber ? "active" :"")">
+                <a class="page-link" asp-controller="Food" asp-action="Sort" asp-route-page="@pg" asp-route-sort="@ViewBag.Sort"> @pg </a>
+            </li>
+        }
+        <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled": "")">
+            <a class="page-link" asp-controller="Food" asp-action="Sort" asp-route-page="@(Model.pageNumber + 1)" asp-route-sort="@ViewBag.Sort"> Next </a>
+        </li>
+    </ul>
+
+</div>

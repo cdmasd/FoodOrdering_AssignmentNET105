@@ -11,7 +11,8 @@ namespace Assignment_Server.Interfaces
         IEnumerable<Food> GetAllFood();
         Food GetById(int id);
         IEnumerable<Food> SearchByName(string name);
-        IEnumerable<Food> getByFilter(decimal? priceRange, int? categoryId);
+        IEnumerable<Food> getByFilter(decimal? minrange,decimal? maxrange);
         IEnumerable<Food> getByCategoryID(int categoryId);
+        IEnumerable<Food> Sort(string sort);
     }
 }

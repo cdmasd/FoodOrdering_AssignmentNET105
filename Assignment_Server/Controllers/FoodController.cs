@@ -82,7 +82,7 @@ namespace Assignment_Server.Controllers
 
 
         // Tìm kiếm theo tên
-        [HttpGet("SearchName{searchName}")]
+        [HttpGet("SearchName={searchName}")]
         public IActionResult SearchByName([FromRoute] string searchName)
         {
             var search = _foodService.SearchByName(searchName);
@@ -98,9 +98,9 @@ namespace Assignment_Server.Controllers
 
         // Tìm kiếm theo filter
         [HttpGet("getByFilter")]
-        public IActionResult GetByFilter([FromQuery]decimal? priceRange, [FromQuery] int? categoryId)
+        public IActionResult GetByFilter([FromQuery]decimal? minrange, [FromQuery]decimal? maxrange)
         {
-            var filteredFoods = _foodService.getByFilter(priceRange, categoryId);
+            var filteredFoods = _foodService.getByFilter(minrange,maxrange);
             return Ok(filteredFoods.Select(x => x.toFoodDTO()));
         }
 
@@ -120,7 +120,19 @@ namespace Assignment_Server.Controllers
 
 
 
+        // Sắp xếp giá giảm dần
+        [HttpGet("sort{sort}")]
+        public IActionResult Sort(int? page, string sort)
+        {
+            var foods = _foodService.Sort(sort).Select(x => x.toFoodDTO());
+            var pageSize = 9;
+            int pageNumber = (page ?? 1);
+            return Ok(foods.ToPagedList(pageNumber, pageSize));
+        }
 
+
+
+ 
         // Cập nhật sản phẩm
         [HttpPut]
         public IActionResult UpdateFood([FromBody]FoodDTO foodDTO)

@@ -39,16 +39,12 @@ namespace Assignment_Server.Services
             return foods;
         }
 
-        public IEnumerable<Food> getByFilter(decimal? priceRange, int? categoryId)
+        public IEnumerable<Food> getByFilter(decimal? minrange,decimal? maxrange)
         {
             var foods = _db.Foods.AsQueryable();
-            if (priceRange.HasValue)
+            if (minrange.HasValue && maxrange.HasValue)
             {
-                foods = foods.Where(x => x.UnitPrice < priceRange.Value);
-            }
-            if (categoryId.HasValue)
-            {
-                foods = foods.Where(x => x.CategoryID == categoryId.Value);
+                foods = foods.Where(x => x.UnitPrice <= maxrange.Value && x.UnitPrice >= minrange.Value);
             }
             var filtered = foods.ToList();
             return filtered;
@@ -68,6 +64,19 @@ namespace Assignment_Server.Services
         {
             var food = _db.Foods.Where(x=> x.Name.Contains(name));
             return food.ToList();
+        }
+
+        public IEnumerable<Food> Sort(string sort)
+        {
+            var foods = GetAllFood();
+            if(sort == "asc")
+            {
+                foods = foods.OrderBy(x => x.UnitPrice);
+            } else
+            {
+                foods = foods.OrderByDescending(x => x.UnitPrice);
+            }
+            return foods;
         }
 
         public bool UpdateFood(Food dto)
