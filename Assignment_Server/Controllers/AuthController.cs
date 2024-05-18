@@ -2,6 +2,7 @@
 using Assignment_Server.Models;
 using Assignment_Server.Models.DTO.User;
 using Assignment_Server.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -30,11 +31,12 @@ namespace Assignment_Server.Controllers
             {
                 return Unauthorized("Username and password is not correct!");
             }
+            var authen = new AuthenticationProperties() { IsPersistent = login.keepLogined };
             // first params : người dùng có tên đăng nhập là login.UserName (object)
             // second params : mật khẩu mà người dùng nhập  (string)
             // third params : ghi nhớ trạng thái đăng nhập (bool)
             // fourth params : mặc định nếu đăng nhập sai 5 lần liên tiếp sẽ bị khoá đăng nhập trong 5 phút
-            var result = await _signInManager.PasswordSignInAsync(user, login.Password,login.keepLogined, false);
+            var result = await _signInManager.PasswordSignInAsync(user, login.Password,authen.IsPersistent, false);
 
             if(!result.Succeeded)
             {

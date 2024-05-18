@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Assignment_UI.ViewModel
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -40,11 +41,24 @@
                             <i class="fa-solid fa-cart-shopping"></i>
                             <span class="fs-6">2</span>
                         </a>
-                        <a class="nav-link me-3" href="#">
-                            </i>
-                            <i class="fa-solid fa-user"></i>
-                            <span class="fs-6"></span>
-                        </a>
+                        @if (Context.Session.Get<UserViewModel>("userLogined") == null)
+                        {
+                            <a class="nav-link me-3" asp-action="Login" asp-controller="Auth">
+                                <i class="fa-solid fa-user"></i>
+                                <span class="fs-6"></span>
+                            </a>
+                        } else
+                        {
+                            <li class="nav-item dropdown list-unstyled" style="cursor : pointer">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Chào, @(Context.Session.Get<UserViewModel>("userLogined").FullName)</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Thông tin tài khoản</a></li>
+                                    <li><a class="dropdown-item" href="#">Đơn hàng</a></li>
+                                    <li><a class="dropdown-item" href="#">Đổi mật khẩu</a></li>
+                                    <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                                </ul>
+                            </li>   
+                        }
                     </div>
                 </div>
             </div>

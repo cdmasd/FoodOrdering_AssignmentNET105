@@ -34,3 +34,10 @@ body {
 .carousel-item {
     transition: transform 1s ease, opacity .5s ease-out;
 }
+.dropdown-item:hover {
+    color: black !important;
+    background-color: #f4bd61 !important;
+}
+.dropdown-item {
+    color: #f4bd61 !important;
+}

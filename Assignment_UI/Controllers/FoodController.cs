@@ -1,5 +1,6 @@
 ﻿using Assignment_UI.Models;
 using Assignment_UI.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -15,7 +16,6 @@ namespace Assignment_UI.Controllers
             _client = new HttpClient();
             _client.BaseAddress = baseAddress;
         }
-
         public IActionResult Index(int? page)
         {
             if(page > 4)
@@ -42,7 +42,6 @@ namespace Assignment_UI.Controllers
             }
             return View();
         }
-
         public IActionResult FilterLoai(int id)
         {
             var foods = new List<Food>();
