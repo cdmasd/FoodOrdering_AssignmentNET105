@@ -95,5 +95,21 @@ namespace Assignment_Server.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            // Kiểm tra xem người dùng đã đăng nhập hay chưa
+            if (User.Identity.IsAuthenticated)
+            {
+                await _signInManager.SignOutAsync();
+                return Ok(new { message = "Logout successful" });
+            }
+            else
+            {
+                // Người dùng chưa đăng nhập, trả về phản hồi lỗi
+                return BadRequest(new { message = "User is not logged in" });
+            }
+        }
     }
 }
