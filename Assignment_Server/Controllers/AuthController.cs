@@ -3,6 +3,7 @@ using Assignment_Server.Models;
 using Assignment_Server.Models.DTO.User;
 using Assignment_Server.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ namespace Assignment_Server.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == login.UserName.ToLower());
+            var user = await _userManager.FindByNameAsync(login.UserName);
 
             if(user == null)
             {
@@ -42,13 +43,14 @@ namespace Assignment_Server.Controllers
             {
                 return Unauthorized("Username and password is not correct!");
             }
+            var roles = await _userManager.GetRolesAsync(user);
             return Ok(
                     new UserReturn
                     {
                         UserName = user.UserName,
                         Email = user.Email,
                         FullName = user.FullName,
-                        Token = _tokenService.CreateToken(user)
+                        Token = _tokenService.CreateToken(user,roles)
                     }
                 );
         }
@@ -74,13 +76,14 @@ namespace Assignment_Server.Controllers
                         var roleResult = await _userManager.AddToRoleAsync(user, "customer");
                         if (roleResult.Succeeded)
                         {
+                            var roles = await _userManager.GetRolesAsync(user);
                             return Ok(
                                 new UserReturn
                                 {
                                     UserName = user.UserName,
                                     Email = user.Email,
                                     FullName = user.FullName,
-                                    Token = _tokenService.CreateToken(user)
+                                    Token = _tokenService.CreateToken(user,roles)
                                 }
                             );
                         }
@@ -97,19 +100,11 @@ namespace Assignment_Server.Controllers
         }
 
         [HttpPost("logout")]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
-            // Kiểm tra xem người dùng đã đăng nhập hay chưa
-            if (User.Identity.IsAuthenticated)
-            {
-                await _signInManager.SignOutAsync();
-                return Ok(new { message = "Logout successful" });
-            }
-            else
-            {
-                // Người dùng chưa đăng nhập, trả về phản hồi lỗi
-                return BadRequest(new { message = "User is not logged in" });
-            }
+            await _signInManager.SignOutAsync();
+            return Ok(new { message = "Logout successful" });
         }
     }
 }

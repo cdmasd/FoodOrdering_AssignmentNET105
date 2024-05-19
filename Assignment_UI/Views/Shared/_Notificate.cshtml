@@ -1,0 +1,27 @@
+﻿@if (TempData["success"] != null)
+{
+    <div class="toast show bg-success position-fixed bottom-0 end-0 m-2 p-2 alert wow fadeIn" style="z-index:11;" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <span class="text-white fw-bold">@TempData["success"]</span>
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+@if (TempData["error"] != null)
+{
+    <div class="toast show bg-danger position-fixed bottom-0 end-0 m-2 p-2 alert wow fadeIn" style="z-index:11;" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <span class="text-white fw-bold">@TempData["error"]</span>
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+<script>
+    setTimeout(function () {
+        $('.alert').alert('close');
+    }, 2000);
+</script>

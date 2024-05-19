@@ -2,6 +2,7 @@
 using Assignment_UI.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace Assignment_UI.Controllers
@@ -28,14 +29,14 @@ namespace Assignment_UI.Controllers
         {
             if(ModelState.IsValid)
             {
-                string data = JsonConvert.SerializeObject(lg);
-                StringContent content = new StringContent((data), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = _client.PostAsync(_client.BaseAddress + "/Auth/login", content).Result;
+                StringContent content = new StringContent(JsonConvert.SerializeObject(lg), Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync(_client.BaseAddress + "/Auth/login", content);
                 if (response.IsSuccessStatusCode)
                 {
                     string jwtToken = await response.Content.ReadAsStringAsync();
                     var userLogined = JsonConvert.DeserializeObject<UserViewModel>(jwtToken);
                     HttpContext.Session.Set<UserViewModel>("userLogined", userLogined);
+                    HttpContext.Session.SetString("Token", userLogined.Token);
                     return RedirectToAction("Index", "Home");
 
                 } else
@@ -46,9 +47,21 @@ namespace Assignment_UI.Controllers
             }
             return View(lg);
         }
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout(string token)
         {
-            return View();
+            var request = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Auth/Logout");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["success"] = "Logout successfully";
+                HttpContext.Session.Remove("userLogined");
+                HttpContext.Session.Remove("Token");
+            } else
+            {
+                TempData["error"] = "Logout fail";
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -47,7 +47,8 @@
                                 <i class="fa-solid fa-user"></i>
                                 <span class="fs-6"></span>
                             </a>
-                        } else
+                        }
+                        else
                         {
                             <li class="nav-item dropdown list-unstyled" style="cursor : pointer">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Chào, @(Context.Session.Get<UserViewModel>("userLogined").FullName)</a>
@@ -55,9 +56,9 @@
                                     <li><a class="dropdown-item" href="#">Thông tin tài khoản</a></li>
                                     <li><a class="dropdown-item" href="#">Đơn hàng</a></li>
                                     <li><a class="dropdown-item" href="#">Đổi mật khẩu</a></li>
-                                    <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                                    <li><a class="dropdown-item" asp-action="Logout" asp-controller="Auth" asp-route-token="@Context.Session.GetString("Token")">Đăng xuất</a></li>
                                 </ul>
-                            </li>   
+                            </li>
                         }
                     </div>
                 </div>
@@ -68,6 +69,7 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
+            <partial name="_Notificate" />
         </main>
     </div>
 
