@@ -33,7 +33,7 @@
         {
             <div class="col wow fadeInUp">
                 <div class="card box-shadow-card">
-                    <a asp-controller="Food" asp-action="CategoryFilter" asp-route-id="@item.CategoryId" class="text-decoration-none">
+                    <a asp-controller="Food" asp-action="FilterLoai" asp-route-id="@item.CategoryId" class="text-decoration-none">
                         <img src="@item.ImageUrl" class="card-img-top">
                         <div class="card-body">
                             <h5 class="card-title fw-bold text-center text-warning">@item.Name.ToUpper()</h5>

@@ -46,10 +46,9 @@ namespace Assignment_Server.Controllers
 
         // Hiển thị tất cả sản phẩm
         [HttpGet]
-        public IActionResult GetAll(int? page)
+        public IActionResult GetAll(int? page, int pageSize)
         {
             var foods = _foodService.GetAllFood().Select(x=> x.toFoodDTO());
-            var pageSize = 9;
             int pageNumber = (page ?? 1);
             return Ok(foods.ToPagedList(pageNumber,pageSize));
         }
@@ -57,8 +56,8 @@ namespace Assignment_Server.Controllers
 
  
         // Tìm sản phẩm theo id
-        [HttpGet("searchID{id:int}")]
-        public IActionResult GetById([FromRoute] int id)
+        [HttpGet("searchId{id:int}")]
+        public IActionResult GetById(int?page,[FromRoute] int id)
         {
 
             var getFood = _foodService.GetById(id);
@@ -67,15 +66,10 @@ namespace Assignment_Server.Controllers
                 getFood.View++;
                 if (_foodService.UpdateFood(getFood))
                 {
-                    var Foods = new FoodAndImageDTO()
-                    {
-                        food = getFood.toFoodDTO(),
-                        images = _imgService.GetFoodImages(getFood.FoodId).ToList()
-                    };
-                    return Ok(Foods);
+                    return Ok(getFood.toFoodDTO());
                 }
             }
-            return NotFound();
+            return BadRequest("Food not found");
         }
 
 

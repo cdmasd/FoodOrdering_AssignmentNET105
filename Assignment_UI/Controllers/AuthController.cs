@@ -2,6 +2,7 @@
 using Assignment_UI.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -37,6 +38,18 @@ namespace Assignment_UI.Controllers
                     var userLogined = JsonConvert.DeserializeObject<UserViewModel>(jwtToken);
                     HttpContext.Session.Set<UserViewModel>("userLogined", userLogined);
                     HttpContext.Session.SetString("Token", userLogined.Token);
+
+                    // Get cart
+                    var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/GetCart");
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", userLogined.Token);
+                    var getCart = await _client.SendAsync(request);
+                    var cart = new List<CartDetail>();
+                    if (getCart.IsSuccessStatusCode)
+                    {
+                        string data = await getCart.Content.ReadAsStringAsync();
+                        cart = JsonConvert.DeserializeObject<List<CartDetail>>(data);
+                        HttpContext.Session.SetString("CartCount", cart.Count.ToString());
+                    }
                     return RedirectToAction("Index", "Home");
 
                 } else
@@ -57,6 +70,7 @@ namespace Assignment_UI.Controllers
                 TempData["success"] = "Logout successfully";
                 HttpContext.Session.Remove("userLogined");
                 HttpContext.Session.Remove("Token");
+                HttpContext.Session.Remove("CartCount");
             } else
             {
                 TempData["error"] = "Logout fail";

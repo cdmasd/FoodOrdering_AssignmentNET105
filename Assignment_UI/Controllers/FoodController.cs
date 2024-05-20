@@ -151,9 +151,28 @@ namespace Assignment_UI.Controllers
             return View();
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(int? page,int id)
         {
-            return View();
+            int pageNumber = (page ?? 1);
+            int pageSize = 4;
+            var food = new Food();
+            var foods = new List<Food>();
+            var response = _client.GetAsync(baseAddress + $"/Food/searchId{id}").Result;
+            var getAll = _client.GetAsync(baseAddress + $"/Food/?page={pageNumber}&pageSize={pageSize}").Result;
+            if (!response.IsSuccessStatusCode || !getAll.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index");
+            }
+            var datafood = response.Content.ReadAsStringAsync().Result;
+            food = JsonConvert.DeserializeObject<Food>(datafood);
+            var listfoods = getAll.Content.ReadAsStringAsync().Result;
+            foods = JsonConvert.DeserializeObject<List<Food>>(listfoods);
+            var details = new DetailViews()
+            {
+                food = food,
+                foods = foods
+            };
+            return View(details);
         }
     }
 }

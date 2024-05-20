@@ -37,15 +37,15 @@
 
                     </ul>
                     <div class="d-flex">
-                        <a class="nav-link me-3" href="#"></i>
+                        <a class="nav-link me-3" asp-action="Index" asp-controller="Cart" asp-route-token="@Context.Session.GetString("Token")">
                             <i class="fa-solid fa-cart-shopping"></i>
-                            <span class="fs-6">2</span>
+                            <span class="fs-6">@(Context.Session.GetString("CartCount"))</span>
                         </a>
                         @if (Context.Session.Get<UserViewModel>("userLogined") == null)
                         {
                             <a class="nav-link me-3" asp-action="Login" asp-controller="Auth">
                                 <i class="fa-solid fa-user"></i>
-                                <span class="fs-6"></span>
+                                <span class="fs-6">Sign in</span>
                             </a>
                         }
                         else
