@@ -1,14 +1,17 @@
 ﻿using Assignment_Server.Data;
 using Assignment_Server.Mapper;
+using Assignment_Server.Models.DTO;
 using Assignment_Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Assignment_Server.Models.DTO.Cart;
 
 namespace Assignment_Server.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CartController(UserManager<User> um, FoodDbContext db) : ControllerBase
@@ -16,14 +19,14 @@ namespace Assignment_Server.Controllers
         readonly FoodDbContext _db = db;
         private readonly UserManager<User> _usermanager = um;
 
-        [Authorize(Roles = "customer"),HttpPost("{id:int}")]
-        public IActionResult AddtoCart([FromRoute]int id, [FromBody]int quantity)
+        [HttpPost("AddtoCart")]
+        public IActionResult AddtoCart([FromBody]CartDetailDTO detail)
         {
             var userId = _usermanager.GetUserId(User);
-            var food = _db.Foods.Find(id);
+            var food = _db.Foods.Find(detail.FoodId);
             if (food == null)
             {
-                return NotFound("no existed food id");
+                return BadRequest("no existed food id");
             }
             var cart = _db.Carts.SingleOrDefault(x => x.UserId == userId);
             if(cart == null)
@@ -36,24 +39,24 @@ namespace Assignment_Server.Controllers
                 _db.SaveChanges();
                 cart = _db.Carts.SingleOrDefault(x => x.UserId == userId);
             }
-            var cartdetail = _db.CartDetails.SingleOrDefault(x => x.FoodId == id);
+            var cartdetail = _db.CartDetails.SingleOrDefault(x => x.FoodId == detail.FoodId);
             if(cartdetail == null)
             {
                 var newCartDetail = new CartDetail()
                 {
                     CartId = cart.CartId,
-                    FoodId = id,
-                    Quantity = quantity,
-                    Total = food.UnitPrice * quantity
+                    FoodId = detail.FoodId,
+                    Quantity = detail.Quantity,
+                    Total = food.UnitPrice * detail.Quantity
                 };
                 _db.CartDetails.Add(newCartDetail);
             } else
             {
-                cartdetail.Quantity += quantity;
-                cartdetail.Total += food.UnitPrice * quantity;
+                cartdetail.Quantity += cartdetail.Quantity;
+                cartdetail.Total += food.UnitPrice * cartdetail.Quantity;
             }
             _db.SaveChanges();
-            return StatusCode(201, $"AddToCart FoodId = {id}");
+            return StatusCode(201, $"Food {detail.FoodId} added");
         }
 
 

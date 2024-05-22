@@ -8,7 +8,7 @@
         <thead class="table-primary text-center">
             <tr>
                 <th>Name</th>
-                <th>UnitPrice</th>
+                <th>Unit Price</th>
                 <th>Quantity</th>
                 <th>Total</th>
                 <th>Action</th>
@@ -17,16 +17,16 @@
         <tbody class="text-center">
             @foreach(var item in Model)
             {
-                <tr>
-                    <td class="d-flex">
-                        <img src="@item.food.mainImage" />
-                        <div class="px-3 align-middle">@item.food.Name</div>
+                <tr class="align-middle">
+                    <td class="d-flex align-items-center">
+                        <img src="@item.Food.mainImage" width="50px" />
+                        <div class="px-3 align-middle">@item.Food.Name</div>
                     </td>
-                    <td>@item.food.UnitPrice</td>
+                    <td>@item.Food.UnitPrice.ToString("##,##") VNĐ</td>
                     <td>
                         <input type="number" class="form-control text-center" value="@item.Quantity" readonly />
                     </td>
-                    <td>@item.Total</td>
+                    <td>@item.Total.ToString("##,##") VNĐ</td>
                     <td>
                         <a asp-action="Remove" class="btn btn-danger">Remove</a>
                     </td>
@@ -36,7 +36,7 @@
     </table>
 }
 <div class="row">
-    <div class="col-6 text-center">Total pay : @Model.Sum(x=> x.Total)</div>
+    <div class="col-6 text-center">Total pay : <span class="fw-bold">@Model.Sum(x => x.Total).ToString("##,##") VNĐ</span></div>
     <div class="col-6 text-center">
         <a asp-action="" class="btn btn-success">Payment -></a>
     </div>

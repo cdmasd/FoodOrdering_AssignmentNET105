@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace Assignment_UI.Controllers
 {
@@ -28,11 +29,33 @@ namespace Assignment_UI.Controllers
                 cart = JsonConvert.DeserializeObject<List<CartDetail>>(data);
                 return View(cart);
             }
-            else
+            if(HttpContext.Session.GetString("Token") ==  null)
             {
                 TempData["error"] = "Please login first";
+                return RedirectToAction("Login", "Auth");
+            } else
+            {
+                TempData["error"] = "Your account don't have permission to access cart!";
+                return RedirectToAction("Index", "Home");
             }
-            return RedirectToAction("Login", "Auth");
+            
+        }
+
+        public async Task<IActionResult> AddToCart(int quantity,int id, string token)
+        {
+            if(token == null)
+            {
+                TempData["error"] = "Please login first";
+                return RedirectToAction("Login", "Auth");
+            }
+            if (true)
+            {
+                TempData["success"] = "Food added";
+            } else
+            {
+                TempData["error"] = "You don't have permission to access this";
+            }
+            return RedirectToAction("Index", "Food");
         }
     }
 }
