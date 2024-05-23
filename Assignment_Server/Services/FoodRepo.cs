@@ -9,29 +9,21 @@ namespace Assignment_Server.Services
     {
         private readonly FoodDbContext _db = db;
 
-        public bool CreateFood(Food food)
+        public Food AddFood(Food food)
         {
             _db.Foods.Add(food);
             _db.SaveChanges();
-            return true;
+            return food;
         }
 
-        public bool DeleteFood(int id)
+        public void DeleteFood(int id)
         {
             var food = GetById(id);
-            if(food != null)
-            {
-                _db.Foods.Remove(food);
-                _db.SaveChanges();
-                return true;
-            }
-            return false;
+            _db.Foods.Remove(food);
+            _db.SaveChanges();
         }
 
-        public IEnumerable<Food> GetAllFood()
-        {
-            return _db.Foods.ToList();
-        }
+        public IEnumerable<Food> Foods => _db.Foods.ToList();
 
         public IEnumerable<Food> getByCategoryID(int categoryId)
         {
@@ -50,15 +42,7 @@ namespace Assignment_Server.Services
             return filtered;
         }
 
-        public Food GetById(int id)
-        {
-            var food = _db.Foods.Find(id);
-            if(food != null)
-            {
-                return food;
-            }
-            return null;
-        }
+        public Food GetById(int id) => _db.Foods.Find(id);
 
         public IEnumerable<Food> SearchByName(string name)
         {
@@ -68,7 +52,7 @@ namespace Assignment_Server.Services
 
         public IEnumerable<Food> Sort(string sort)
         {
-            var foods = GetAllFood();
+            var foods = Foods;
             if(sort == "asc")
             {
                 foods = foods.OrderBy(x => x.UnitPrice);
@@ -79,11 +63,11 @@ namespace Assignment_Server.Services
             return foods;
         }
 
-        public bool UpdateFood(Food dto)
+        public Food UpdateFood(Food dto)
         {
             _db.Foods.Update(dto);
             _db.SaveChanges();
-            return true;
+            return dto;
         }
     }
 }

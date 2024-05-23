@@ -5,10 +5,10 @@ namespace Assignment_Server.Interfaces
 {
     public interface IFoodRepo
     {
-        bool CreateFood(Food food);
-        bool UpdateFood(Food food);
-        bool DeleteFood(int id);
-        IEnumerable<Food> GetAllFood();
+        Food AddFood(Food food);
+        Food UpdateFood(Food food);
+        void DeleteFood(int id);
+        IEnumerable<Food> Foods { get; }
         Food GetById(int id);
         IEnumerable<Food> SearchByName(string name);
         IEnumerable<Food> getByFilter(decimal? minrange,decimal? maxrange);

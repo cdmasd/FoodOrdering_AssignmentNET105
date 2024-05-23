@@ -96,7 +96,7 @@ namespace Assignment_Server.Controllers
         [HttpGet("CategoryMenu")]
         public IActionResult GetFoods()
         {
-            var foods = _foodService.GetAllFood().GroupBy(x => x.CategoryID).Select(c => new CategoryCount()
+            var foods = _foodService.Foods.GroupBy(x => x.CategoryID).Select(c => new CategoryCount()
             {
                 CategoryId = c.Key,
                 Name = _cateService.GetById(c.Key).Name,

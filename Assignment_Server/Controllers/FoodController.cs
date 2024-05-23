@@ -4,6 +4,7 @@ using Assignment_Server.Mapper;
 using Assignment_Server.Models;
 using Assignment_Server.Models.DTO;
 using Assignment_Server.Models.DTO.Food;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
@@ -19,6 +20,7 @@ namespace Assignment_Server.Controllers
 
         #region For Food
         // Tạo sản phẩm mới
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult CreateFood([FromBody] CreateFoodDTO dto)
         {
@@ -32,11 +34,7 @@ namespace Assignment_Server.Controllers
                     mainImage = dto.mainImage,
                     View = 0
                 };
-                if(_foodService.CreateFood(food))
-                {
-                    return StatusCode(201, food.toFoodDTO());
-                }
-                return BadRequest("Somethings went wrong ( FoodController line : 31 )");
+                return StatusCode(201, _foodService.AddFood(food).toFoodDTO());
             }
             return BadRequest(ModelState);
         }
@@ -46,9 +44,9 @@ namespace Assignment_Server.Controllers
 
         // Hiển thị tất cả sản phẩm
         [HttpGet]
-        public IActionResult GetAll(int? page, int pageSize)
+        public IActionResult GetAll(int? page, int pageSize = 9)
         {
-            var foods = _foodService.GetAllFood().Select(x=> x.toFoodDTO());
+            var foods = _foodService.Foods.Select(x=> x.toFoodDTO());
             int pageNumber = (page ?? 1);
             return Ok(foods.ToPagedList(pageNumber,pageSize));
         }
@@ -56,27 +54,24 @@ namespace Assignment_Server.Controllers
 
  
         // Tìm sản phẩm theo id
-        [HttpGet("searchId{id:int}")]
-        public IActionResult GetById(int?page,[FromRoute] int id)
+        [HttpGet("{id:int}")]
+        public IActionResult GetById([FromRoute] int id)
         {
 
             var getFood = _foodService.GetById(id);
             if (getFood != null)
             {
                 getFood.View++;
-                if (_foodService.UpdateFood(getFood))
-                {
-                    return Ok(getFood.toFoodDTO());
-                }
+                return Ok(_foodService.UpdateFood(getFood).toFoodDTO());
             }
-            return BadRequest("Food not found");
+            return NotFound("Food not found");
         }
 
 
 
 
         // Tìm kiếm theo tên
-        [HttpGet("SearchName={searchName}")]
+        [HttpGet("name={searchName}")]
         public IActionResult SearchByName([FromRoute] string searchName)
         {
             var search = _foodService.SearchByName(searchName);
@@ -91,7 +86,7 @@ namespace Assignment_Server.Controllers
 
 
         // Tìm kiếm theo filter
-        [HttpGet("getByFilter")]
+        [HttpGet("filter")]
         public IActionResult GetByFilter([FromQuery]decimal? minrange, [FromQuery]decimal? maxrange)
         {
             var filteredFoods = _foodService.getByFilter(minrange,maxrange);
@@ -102,7 +97,7 @@ namespace Assignment_Server.Controllers
 
 
         // Lấy sản phẩm theo mã danh mục
-        [HttpGet("SearchCategoryId{categoryId:int}")]
+        [HttpGet("categoryid={categoryId:int}")]
         public IActionResult GetByCategoryID([FromRoute]int categoryId)
         {
             var foods = _foodService.getByCategoryID(categoryId);
@@ -115,7 +110,7 @@ namespace Assignment_Server.Controllers
 
 
         // Sắp xếp giá giảm dần
-        [HttpGet("sort{sort}")]
+        [HttpGet("sort={sort}")]
         public IActionResult Sort(int? page, string sort)
         {
             var foods = _foodService.Sort(sort).Select(x => x.toFoodDTO());
@@ -128,7 +123,7 @@ namespace Assignment_Server.Controllers
 
  
         // Cập nhật sản phẩm
-        [HttpPut]
+        [HttpPut, Authorize(Roles = "admin")]
         public IActionResult UpdateFood([FromBody]FoodDTO foodDTO)
         {
             var upFood = _foodService.GetById(foodDTO.FoodId);
@@ -141,14 +136,11 @@ namespace Assignment_Server.Controllers
                     upFood.View = foodDTO.View;
                     upFood.CategoryID = foodDTO.CategoryID;
 
-                    if (_foodService.UpdateFood(upFood))
-                    {
-                        return Ok(new { message = "Updated!", obj = upFood.toFoodDTO() });
-                    }
+                    return Ok(_foodService.UpdateFood(upFood));
                 }
                 return BadRequest(ModelState);
             }
-            return NotFound();
+            return NotFound("Food is not existed!");
         }
 
 
@@ -156,45 +148,7 @@ namespace Assignment_Server.Controllers
 
         // Xoá sản phẩm
         [HttpDelete("{id:int}")]
-        public IActionResult DeleteFood([FromRoute]int id)
-        {
-            if (_foodService.DeleteFood(id))
-            {
-                return Ok(new { message = "Deleted!"});
-            }
-            return NotFound();
-        }
-        #endregion
-
-        #region For FoodImage
-        // Thêm mới hình ảnh
-        [HttpPost("AddImage")]
-        public IActionResult createImage([FromBody] CreateImageFoodDTO image)
-        {
-            if (ModelState.IsValid)
-            {
-                var foodimg = new FoodImage()
-                {
-                    ImageUrl = image.ImageUrl,
-                    FoodId = image.FoodId
-                };
-                if (_imgService.CreateFoodImage(foodimg))
-                {
-                    return StatusCode(201, foodimg);
-                }        
-            }
-            return BadRequest(ModelState);
-        }
-        [HttpGet("GetImages{foodid:int}")]
-        public IActionResult GetImage([FromRoute]int foodid)
-        {
-            var imgs = _imgService.GetFoodImages(foodid);
-            if (imgs.Any())
-            {
-                return Ok(imgs);
-            }
-            return NotFound();
-        }
+        public void DeleteFood([FromRoute]int id) => _foodService.DeleteFood(id);
         #endregion
     }
 }
