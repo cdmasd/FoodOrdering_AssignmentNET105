@@ -7,6 +7,7 @@ using Assignment_Server.Models.DTO.Category;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Assignment_Server.Controllers
 {
@@ -19,7 +20,7 @@ namespace Assignment_Server.Controllers
 
         // Tạo category mới
         [Authorize(Roles = "admin")]
-        [HttpPost()]
+        [HttpPost]
         public IActionResult CreateCategory([FromBody] CreateCategoryDTO category)
         {
             if (ModelState.IsValid)
@@ -29,11 +30,7 @@ namespace Assignment_Server.Controllers
                     Name = category.Name,
                     ImageUrl = category.ImageUrl
                 };
-                if(_cateService.CreateCategory(addCate))
-                {
-                    return StatusCode(201, addCate.toCategoryDTO());
-                }
-                return BadRequest("Somethings went wrong");
+                return StatusCode(201, _cateService.AddCategory(addCate).toCategoryDTO());
             }
             return BadRequest(ModelState);
         }
@@ -42,9 +39,9 @@ namespace Assignment_Server.Controllers
 
         // Hiển thị tất cả category
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll() 
         {
-            var categories = _cateService.GetAll().Select(x => x.toCategoryDTO());
+            var categories = _cateService.Categories.Select(x => x.toCategoryDTO());
             return Ok(categories);
         }
 
@@ -60,7 +57,7 @@ namespace Assignment_Server.Controllers
             {
                 return Ok(category.toCategoryDTO());
             }
-            return NotFound();
+            return NotFound("Category is not existed!");
         }
 
 
@@ -78,15 +75,11 @@ namespace Assignment_Server.Controllers
                 {
                     Updatecate.Name = category.Name;
                     Updatecate.ImageUrl = category.ImageUrl;
-                    if(_cateService.UpdateCategory(Updatecate))
-                    {
-                        return Ok(new { message = "Updated!", obj = Updatecate.toCategoryDTO() });
-                    }
-                    return BadRequest("Somethings went wrong");
+                    return Ok(_cateService.UpdateCategory(Updatecate).toCategoryDTO());
                 }
                 return BadRequest(ModelState);
             }
-            return NotFound();
+            return NotFound("Category is not existed!");
         }
 
 
@@ -95,14 +88,7 @@ namespace Assignment_Server.Controllers
         // Xoá category
         [Authorize(Roles ="admin")]
         [HttpDelete("{id:int}")]
-        public IActionResult DeleteCategory([FromRoute] int id)
-        {
-            if (_cateService.DeleteCategory(id))
-            {
-                return Ok(new { message = "Deleted!" });
-            }
-            return NotFound();
-        }
+        public void DeleteCategory([FromRoute] int id) => _cateService.DeleteCategory(id);
 
 
 

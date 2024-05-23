@@ -4,5 +4,6 @@ namespace Assignment_Server.Interfaces
 {
     public interface ICartRepo
     {
+
     }
 }

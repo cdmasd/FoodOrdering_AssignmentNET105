@@ -8,22 +8,24 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Assignment_Server.Models.DTO.Cart;
+using Assignment_Server.Interfaces;
 
 namespace Assignment_Server.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CartController(UserManager<User> um, FoodDbContext db) : ControllerBase
+    public class CartController(UserManager<User> um, FoodDbContext db, IFoodRepo food) : ControllerBase
     {
         readonly FoodDbContext _db = db;
         private readonly UserManager<User> _usermanager = um;
+        private IFoodRepo _food = food;
 
-        [HttpPost("AddtoCart")]
+        [HttpPost("carts")]
         public IActionResult AddtoCart([FromBody]CartDetailDTO detail)
         {
             var userId = _usermanager.GetUserId(User);
-            var food = _db.Foods.Find(detail.FoodId);
+            var food = _food.GetById(detail.FoodId);
             if (food == null)
             {
                 return BadRequest("no existed food id");
@@ -62,7 +64,7 @@ namespace Assignment_Server.Controllers
 
 
 
-        [Authorize(Roles = "customer"), HttpGet("GetCart")]
+        [Authorize(Roles = "customer"), HttpGet("carts")]
         public IActionResult GetCart()
         {
             var user = _usermanager.GetUserId(User);

@@ -9,47 +9,33 @@ namespace Assignment_Server.Services
     {
         private readonly FoodDbContext _db = db;
 
-        public bool CreateCategory(Category category)
+        public Category AddCategory(Category category)
         {
             _db.Categories.Add(category);
             _db.SaveChanges();
-            return true;
+            return category;
         }
 
-        public bool DeleteCategory(int id)
+        public void DeleteCategory(int id)
         {
             var category = GetById(id);
             if(category != null)
             {
                 _db.Categories.Remove(category);
                 _db.SaveChanges();
-                return true;
             }
-            
-            return false;
         }
 
-        public IEnumerable<Category> GetAll()
-        {
-            var categories = _db.Categories.ToList();
-            return categories;
-        }
+        public IEnumerable<Category> Categories => _db.Categories.ToList();
 
-        public Category GetById(int id)
-        {
-            var category = _db.Categories.Find(id);
-            if(category == null)
-            {
-                return null;
-            }
-            return category;
-        }
+        public Category GetById(int id) => _db.Categories.Find(id) ;
 
-        public bool UpdateCategory(Category category)
+
+        public Category UpdateCategory(Category category)
         {
             _db.Categories.Update(category);
             _db.SaveChanges();
-            return true;
+            return category;
         }
     }
 }

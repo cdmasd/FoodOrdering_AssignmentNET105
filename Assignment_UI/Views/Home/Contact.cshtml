@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Contact us";
+}
+    <div class="bg-light text-dark min-vh-100 d-flex justify-content-center align-items-center box-shadow-edit">
+        <div class="w-100 md:w-50 px-4 py-8">
+            <h1 class="text-3xl fw-bold mb-4">Get in Touch</h1>
+            <p class="text-lg mb-6">We'd love to hear from you!</p>
+            <form class="w-100 max-w-md">
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-6">
+                        <label for="name" class="form-label text-muted fw-bold">Name</label>
+                        <input id="name" type="text" class="form-control" placeholder="John Kenedy">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="email" class="form-label text-muted fw-bold">Email</label>
+                        <input id="email" type="email" class="form-control" placeholder="Example@gmail.com">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="message" class="form-label text-muted fw-bold">Message</label>
+                    <textarea id="message" class="form-control" rows="5" placeholder="What you do you want to improve your experience"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+        <div class="w-100 md:w-50 bg-secondary p-4">
+            <img alt="Contact" src="https://placehold.co/400x300" class="w-100 rounded">
+            <p class="text-center mt-4">Contact us for any inquiries</p>
+        </div>
+    </div>

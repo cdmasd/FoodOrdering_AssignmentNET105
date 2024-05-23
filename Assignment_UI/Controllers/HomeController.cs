@@ -30,7 +30,7 @@ namespace Assignment_UI.Controllers
             return View(categories);
         }
 
-        public IActionResult Privacy()
+        public IActionResult Contact()
         {
             return View();
         }

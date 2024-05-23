@@ -5,10 +5,10 @@ namespace Assignment_Server.Interfaces
 {
     public interface ICategoryRepo
     {
-        bool CreateCategory(Category category);
-        IEnumerable<Category> GetAll();
+        IEnumerable<Category> Categories { get; }
         Category GetById(int id);
-        bool UpdateCategory(Category category);
-        bool DeleteCategory(int id);
+        Category AddCategory(Category category);
+        Category UpdateCategory(Category category);
+        void DeleteCategory(int id);
     }
 }

@@ -19,7 +19,7 @@ namespace Assignment_UI.Controllers
         }
         public async Task<IActionResult> Index(string token)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/GetCart");
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/carts");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.SendAsync(request);
             var cart = new List<CartDetail>();
