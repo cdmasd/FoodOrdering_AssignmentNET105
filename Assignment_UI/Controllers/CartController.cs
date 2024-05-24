@@ -62,5 +62,49 @@ namespace Assignment_UI.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> Remove(int id)
+        {
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                TempData["error"] = "Please login first";
+                return RedirectToAction("Login", "Auth");
+            }
+            var request = new HttpRequestMessage(HttpMethod.Delete, _client.BaseAddress + $"/Cart/cart-details/{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["success"] = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                TempData["error"] = await response.Content.ReadAsStringAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> RemoveAll()
+        {
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                TempData["error"] = "Please login first";
+                return RedirectToAction("Login", "Auth");
+            }
+            var request = new HttpRequestMessage(HttpMethod.Delete, _client.BaseAddress + $"/Cart/cart-details");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["success"] = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                TempData["error"] = await response.Content.ReadAsStringAsync();
+            }
+            return RedirectToAction("Index");
+        }
     }
 }

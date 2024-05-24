@@ -81,7 +81,7 @@ namespace Assignment_Server.Controllers
         {
             var userId = _usermanager.GetUserId(User);
             _cart.DeleteCartDetail(userId, id);
-            return Ok();
+            return Ok("Removed");
         }
 
 
@@ -93,7 +93,7 @@ namespace Assignment_Server.Controllers
             {
                 var userId = _usermanager.GetUserId(User);
                 _cart.DeleteAllCartDetail(userId);
-                return Ok();
+                return Ok("All removed");
             } catch (Exception ex)
             {
                 return BadRequest(ex.Message);

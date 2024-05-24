@@ -28,7 +28,7 @@
                     </td>
                     <td>@item.Total.ToString("##,##") VNĐ</td>
                     <td>
-                        <a asp-action="Remove" class="btn btn-danger">Remove</a>
+                        <a asp-action="Remove" asp-controller="Cart" asp-route-id="@item.Food.FoodId" class="btn btn-danger">Remove</a>
                     </td>
                 </tr>
             }
@@ -37,7 +37,14 @@
 }
 <div class="row">
     <div class="col-6 text-center">Total pay : <span class="fw-bold">@Model.Sum(x => x.Total).ToString("##,##") VNĐ</span></div>
-    <div class="col-6 text-center">
-        <a asp-action="" class="btn btn-success">Payment -></a>
+    <div class="col-6 d-flex justify-content-around">
+        @if (!Model.Any())
+        {
+            <a asp-action="RemoveAll" asp-controller="Cart" class="btn btn-danger" hidden>Remove All</a>
+        } else
+        {
+            <a asp-action="RemoveAll" asp-controller="Cart" class="btn btn-danger">Remove All</a>
+        }
+        <a asp-action="Payment" class="btn btn-success">Payment -></a>
     </div>
 </div>
