@@ -1,8 +1,10 @@
 ﻿using Assignment_UI.Models;
+using Assignment_UI.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Assignment_UI.Controllers
@@ -17,9 +19,15 @@ namespace Assignment_UI.Controllers
             _client = new HttpClient();
             _client.BaseAddress = baseAddress;
         }
-        public async Task<IActionResult> Index(string token)
+        public async Task<IActionResult> Index()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/carts");
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                TempData["error"] = "Please login first";
+                return RedirectToAction("Login", "Auth");
+            }
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/cart-details");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.SendAsync(request);
             var cart = new List<CartDetail>();
@@ -27,35 +35,32 @@ namespace Assignment_UI.Controllers
             {
                 string data = await response.Content.ReadAsStringAsync();
                 cart = JsonConvert.DeserializeObject<List<CartDetail>>(data);
-                return View(cart);
             }
-            if(HttpContext.Session.GetString("Token") ==  null)
-            {
-                TempData["error"] = "Please login first";
-                return RedirectToAction("Login", "Auth");
-            } else
-            {
-                TempData["error"] = "Your account don't have permission to access cart!";
-                return RedirectToAction("Index", "Home");
-            }
-            
+            return View(cart);
         }
 
-        public async Task<IActionResult> AddToCart(int quantity,int id, string token)
+        [HttpPost]
+        public async Task<IActionResult> AddToCart(int id, int quantity)
         {
-            if(token == null)
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
             {
                 TempData["error"] = "Please login first";
                 return RedirectToAction("Login", "Auth");
             }
-            if (true)
+            var details = new CartDetailVM() { FoodId = id, Quantity = quantity };
+            var request = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Cart/cart-details");
+            request.Content = new StringContent(JsonConvert.SerializeObject(details), Encoding.UTF8, "application/json");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
             {
-                TempData["success"] = "Food added";
+                TempData["success"] = await response.Content.ReadAsStringAsync();
             } else
             {
-                TempData["error"] = "You don't have permission to access this";
+                TempData["error"] = await response.Content.ReadAsStringAsync();
             }
-            return RedirectToAction("Index", "Food");
+            return RedirectToAction("Index");
         }
     }
 }

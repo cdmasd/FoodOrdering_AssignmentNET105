@@ -26,6 +26,8 @@ builder.Services.AddDbContext<FoodDbContext>(options =>
 builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
 builder.Services.AddScoped<IFoodRepo, FoodRepo>();
 builder.Services.AddScoped<IFoodImage, FoodImageRepo>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ICartRepo,CartRepo>();
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
@@ -87,7 +89,6 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 

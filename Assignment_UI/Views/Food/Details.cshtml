@@ -2,20 +2,21 @@
 @{
     ViewData["title"] = "Food details";
 }
-<div class="mb-3 row box-shadow-edit p-3 rounded-2">
-    <div class="col-3">
+<div class="container">
+    <div class="mb-3 row box-shadow-edit py-3 rounded-2">
+    <div class="offset-1 col-4">
         <img src="@Model.food.mainImage" width="300px" height="300px"/>
     </div>
-    <div class="offset-1 col-8" style="position:relative; top:30px; left:100px;">
+    <div class="col-6" style="position:relative; top:30px; left:100px;">
         <div class="h2 fw-bold text-warning">@Model.food.Name.ToUpper()</div>
         <div class="h5">Giá : @Model.food.UnitPrice.ToString("#,##") vnđ</div>
         <div class="h6 py-1">Lượt xem : @Model.food.View</div>
         <div class="h6 py-1">Số lượng :</div>
-        <form method="post" asp-action="AddtoCart" asp-controller="Cart" asp-route-id="@Model.food.FoodId" asp-route-token="@Context.Session.GetString("Token")">
-            <div class="btn-group w-25 py-1 quantity">
-                <button type="button" class="btn btn-warning">-</button>
-                <input type="number" class="form-control rounded-0 text-center" name="quantity" value="1" />
-                <button type="button" class="btn btn-plus btn-warning">+</button>
+        <form method="post" asp-action="AddtoCart" asp-controller="Cart" asp-route-id="@Model.food.FoodId">
+            <div class="btn-group w-50 py-1">
+                <button type="button" class="btn btn-warning" onclick="decrease()">-</button>
+                <input type="number" class="form-control rounded-0 text-center" name="quantity" id="quantity" readonly value="1" />
+                <button type="button" class="btn btn-plus btn-warning" onclick="increase()">+</button>
             </div>
             <div class="d-flex justify-content-between py-3" style="width:250px;">
                 <button class="btn btn-warning">Thêm giỏ hàng</button>
@@ -23,8 +24,9 @@
         </form>
     </div>
 </div>
-<div class="container">
+ <hr />
     <h4 class="fw-bold my-3">Người khác cũng đặt</h4>
+    <hr />
     <div class="row">
         @foreach(var item in Model.foods)
         {
@@ -50,24 +52,12 @@
     </div>
 </div>
 <script>
-    ﻿(function ($) {
-    "use strict";
-
-    // Product Quantity
-    $('.quantity button').on('click', function () {
-        var button = $(this);
-        var oldValue = button.parent().parent().find('input').val();
-        if (button.hasClass('btn-plus')) {
-            var newVal = parseFloat(oldValue) + 1;
-        } else {
-            if (oldValue > 0) {
-                var newVal = parseFloat(oldValue) - 1;
-            } else {
-                newVal = 0;
-            }
+    function increase(){
+        document.getElementById('quantity').value++;
+    }
+    function decrease() {
+        if (document.getElementById('quantity').value > 1) {
+            document.getElementById('quantity').value--;
         }
-        button.parent().parent().find('input').val(newVal);
-    });
-
-})(jQuery);
+    }
 </script>

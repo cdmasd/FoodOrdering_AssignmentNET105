@@ -37,7 +37,7 @@
 
                     </ul>
                     <div class="d-flex">
-                        <a class="nav-link me-3" asp-action="Index" asp-controller="Cart" asp-route-token="@Context.Session.GetString("Token")">
+                        <a class="nav-link me-3" asp-action="Index" asp-controller="Cart">
                             <i class="fa-solid fa-cart-shopping"></i>
                             <span class="fs-6">@(Context.Session.GetString("CartCount"))</span>
                         </a>

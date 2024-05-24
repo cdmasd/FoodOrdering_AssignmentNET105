@@ -45,7 +45,7 @@ namespace Assignment_UI.Controllers
         public IActionResult FilterLoai(int id)
         {
             var foods = new List<Food>();
-            var response = _client.GetAsync(baseAddress + $"/Food/SearchCategoryId{id}").Result;
+            var response = _client.GetAsync(baseAddress + $"/Food/categoryid={id}").Result;
             if (response.IsSuccessStatusCode)
             {
                 string data = response.Content.ReadAsStringAsync().Result;
@@ -62,7 +62,7 @@ namespace Assignment_UI.Controllers
         public IActionResult SearchName(string query)
         {
             var foods = new List<Food>();
-            var response = _client.GetAsync(baseAddress + $"/Food/SearchName={query}").Result;
+            var response = _client.GetAsync(baseAddress + $"/Food/name={query}").Result;
             if (response.IsSuccessStatusCode)
             {
                 string data = response.Content.ReadAsStringAsync().Result;
@@ -109,7 +109,7 @@ namespace Assignment_UI.Controllers
                 maxrange = 900000;
             }
             var foods = new List<Food>();
-            var response = _client.GetAsync(baseAddress + $"/Food/getByFilter?minrange={minrange}&maxrange={maxrange}").Result;
+            var response = _client.GetAsync(baseAddress + $"/Food/filter?minrange={minrange}&maxrange={maxrange}").Result;
             if (response.IsSuccessStatusCode)
             {
                 string data = response.Content.ReadAsStringAsync().Result;
@@ -132,7 +132,7 @@ namespace Assignment_UI.Controllers
             int pageNumber = (page ?? 1);
             int pageSize = 9;
             var foods = new List<Food>();
-            HttpResponseMessage response = _client.GetAsync(baseAddress + $"/Food/sort{sort}?page={pageNumber}").Result;
+            HttpResponseMessage response = _client.GetAsync(baseAddress + $"/Food/sort={sort}?page={pageNumber}").Result;
             ViewBag.Sort = sort;
             if (response.IsSuccessStatusCode)
             {
@@ -153,11 +153,11 @@ namespace Assignment_UI.Controllers
 
         public IActionResult Details(int? page,int id)
         {
-            int pageNumber = (page ?? 1);
+            int pageNumber = (page ?? 4);
             int pageSize = 4;
             var food = new Food();
             var foods = new List<Food>();
-            var response = _client.GetAsync(baseAddress + $"/Food/searchId{id}").Result;
+            var response = _client.GetAsync(baseAddress + $"/Food/{id}").Result;
             var getAll = _client.GetAsync(baseAddress + $"/Food/?page={pageNumber}&pageSize={pageSize}").Result;
             if (!response.IsSuccessStatusCode || !getAll.IsSuccessStatusCode)
             {

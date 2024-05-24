@@ -40,7 +40,7 @@ namespace Assignment_UI.Controllers
                     HttpContext.Session.SetString("Token", userLogined.Token);
 
                     // Get cart
-                    var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/GetCart");
+                    var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/cart-details");
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", userLogined.Token);
                     var getCart = await _client.SendAsync(request);
                     var cart = new List<CartDetail>();

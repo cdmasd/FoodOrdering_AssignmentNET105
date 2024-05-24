@@ -15,13 +15,14 @@ namespace Assignment_Server.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CartController(UserManager<User> um, FoodDbContext db, IFoodRepo food) : ControllerBase
+    public class CartController(UserManager<User> um, ICartRepo db, IFoodRepo food, FoodDbContext dbb) : ControllerBase
     {
-        readonly FoodDbContext _db = db;
+        readonly FoodDbContext _db = dbb;
+        readonly ICartRepo _cart = db;
         private readonly UserManager<User> _usermanager = um;
         private IFoodRepo _food = food;
 
-        [HttpPost("carts")]
+        [HttpPost("cart-details")]
         public IActionResult AddtoCart([FromBody]CartDetailDTO detail)
         {
             var userId = _usermanager.GetUserId(User);
@@ -30,18 +31,8 @@ namespace Assignment_Server.Controllers
             {
                 return BadRequest("no existed food id");
             }
-            var cart = _db.Carts.SingleOrDefault(x => x.UserId == userId);
-            if(cart == null)
-            {
-                var newCart = new Cart()
-                {
-                    UserId = userId
-                };
-                _db.Carts.Add(newCart);
-                _db.SaveChanges();
-                cart = _db.Carts.SingleOrDefault(x => x.UserId == userId);
-            }
-            var cartdetail = _db.CartDetails.SingleOrDefault(x => x.FoodId == detail.FoodId);
+            var cart = _cart.checkCartExist(userId);
+            var cartdetail = _cart.CheckExistFood(detail.FoodId);
             if(cartdetail == null)
             {
                 var newCartDetail = new CartDetail()
@@ -51,20 +42,20 @@ namespace Assignment_Server.Controllers
                     Quantity = detail.Quantity,
                     Total = food.UnitPrice * detail.Quantity
                 };
-                _db.CartDetails.Add(newCartDetail);
+                _cart.AddCartDetail(newCartDetail);
             } else
             {
-                cartdetail.Quantity += cartdetail.Quantity;
-                cartdetail.Total += food.UnitPrice * cartdetail.Quantity;
+                cartdetail.Quantity += detail.Quantity;
+                cartdetail.Total += food.UnitPrice * detail.Quantity;
+                _cart.UpdateCart(cartdetail);
             }
-            _db.SaveChanges();
             return StatusCode(201, $"Food {detail.FoodId} added");
         }
 
 
 
 
-        [Authorize(Roles = "customer"), HttpGet("carts")]
+        [HttpGet("cart-details")]
         public IActionResult GetCart()
         {
             var user = _usermanager.GetUserId(User);
@@ -85,7 +76,7 @@ namespace Assignment_Server.Controllers
 
 
 
-        [Authorize(Roles = "customer"),HttpDelete("{id:int}")]
+        [HttpDelete("cart-details/{id:int}")]
         public IActionResult RemoveFromCart([FromRoute]int id)
         {
             var userId = _usermanager.GetUserId(User);
@@ -102,18 +93,24 @@ namespace Assignment_Server.Controllers
 
 
 
-        [Authorize(Roles = "customer"),HttpDelete]
-        public IActionResult DeleteCart()
+        [HttpDelete("cart-details")]
+        public IActionResult DeleteAllFromCartDetail()
         {
-            var userId = _usermanager.GetUserId(User);
-            var cart = _db.Carts.SingleOrDefault(x => x.UserId == userId);
-           if(cart != null)
+            try
             {
-                _db.Carts.Remove(cart);
+                var userId = _usermanager.GetUserId(User);
+                var cart = _db.Carts.SingleOrDefault(x => x.UserId == userId);
+                var delFood = _db.CartDetails.Where(x => x.CartId == cart.CartId).ToList();
+                foreach (var item in delFood)
+                {
+                    _db.CartDetails.Remove(item);
+                }
                 _db.SaveChanges();
-                return Ok("Deleted Cart");
+                return Ok();
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
-           return NotFound();
         }
     }
 }
