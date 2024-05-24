@@ -80,15 +80,8 @@ namespace Assignment_Server.Controllers
         public IActionResult RemoveFromCart([FromRoute]int id)
         {
             var userId = _usermanager.GetUserId(User);
-            var cart = _db.Carts.SingleOrDefault(x => x.UserId ==  userId);
-            var delFood = _db.CartDetails.SingleOrDefault(x=> x.FoodId == id && x.CartId == cart.CartId);
-            if(delFood != null)
-            {
-                _db.CartDetails.Remove(delFood);
-                _db.SaveChanges();
-                return Ok("Deleted");
-            }
-            return NotFound();
+            _cart.DeleteCartDetail(userId, id);
+            return Ok();
         }
 
 
@@ -99,13 +92,7 @@ namespace Assignment_Server.Controllers
             try
             {
                 var userId = _usermanager.GetUserId(User);
-                var cart = _db.Carts.SingleOrDefault(x => x.UserId == userId);
-                var delFood = _db.CartDetails.Where(x => x.CartId == cart.CartId).ToList();
-                foreach (var item in delFood)
-                {
-                    _db.CartDetails.Remove(item);
-                }
-                _db.SaveChanges();
+                _cart.DeleteAllCartDetail(userId);
                 return Ok();
             } catch (Exception ex)
             {

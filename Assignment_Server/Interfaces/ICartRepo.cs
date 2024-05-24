@@ -9,5 +9,7 @@ namespace Assignment_Server.Interfaces
         void AddCartDetail(CartDetail detail);
         CartDetail CheckExistFood(int FoodId);
         void UpdateCart(CartDetail detail);
+        void DeleteCartDetail(string UserId,int FoodId);
+        void DeleteAllCartDetail(string UserId);
     }
 }

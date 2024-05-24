@@ -22,6 +22,10 @@ namespace Assignment_UI.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if(HttpContext.Session.GetString("Token") != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 

@@ -6,9 +6,8 @@ using System.Security.Claims;
 
 namespace Assignment_Server.Services
 {
-    public class CartRepo(UserManager<User> um, FoodDbContext db) : ICartRepo
+    public class CartRepo(FoodDbContext db) : ICartRepo
     {
-        readonly UserManager<User> _userManager = um;
         readonly FoodDbContext _db = db;
 
         public Cart AddCart(string UserId)
@@ -51,6 +50,28 @@ namespace Assignment_Server.Services
         {
                 _db.CartDetails.Update(cartdetail);
                 _db.SaveChanges();
+        }
+
+        public void DeleteCartDetail(string UserId,int FoodId)
+        {
+            var cart = _db.Carts.SingleOrDefault(x => x.UserId == UserId);
+            var delFood = _db.CartDetails.SingleOrDefault(x => x.FoodId == FoodId && x.CartId == cart.CartId);
+            if (delFood != null)
+            {
+                _db.CartDetails.Remove(delFood);
+                _db.SaveChanges();
+            }
+        }
+
+        public void DeleteAllCartDetail(string UserId)
+        {
+            var cart = _db.Carts.SingleOrDefault(x => x.UserId == UserId);
+            var delFood = _db.CartDetails.Where(x => x.CartId == cart.CartId).ToList();
+            foreach (var item in delFood)
+            {
+                _db.CartDetails.Remove(item);
+            }
+            _db.SaveChanges();
         }
     }
 }
