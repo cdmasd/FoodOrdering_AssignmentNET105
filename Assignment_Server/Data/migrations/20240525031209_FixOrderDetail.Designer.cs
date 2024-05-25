@@ -4,6 +4,7 @@ using Assignment_Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Assignment_Server.Data.migrations
 {
     [DbContext(typeof(FoodDbContext))]
-    partial class FoodDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240525031209_FixOrderDetail")]
+    partial class FixOrderDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,10 +177,6 @@ namespace Assignment_Server.Data.migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("ReceviedDate")
                         .HasColumnType("datetime2");
 
@@ -198,10 +197,16 @@ namespace Assignment_Server.Data.migrations
 
             modelBuilder.Entity("Assignment_Server.Models.OrderDetail", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("OrderDetailId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"));
+
                     b.Property<int>("FoodId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -213,9 +218,11 @@ namespace Assignment_Server.Data.migrations
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("OrderId", "FoodId");
+                    b.HasKey("OrderDetailId");
 
                     b.HasIndex("FoodId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -324,13 +331,13 @@ namespace Assignment_Server.Data.migrations
                     b.HasData(
                         new
                         {
-                            Id = "7eae51fe-530c-4336-8688-0fc0110c9319",
+                            Id = "39b674c9-723d-484d-a624-74a5cf8fdd34",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8b10f1ad-b9ea-46a8-b362-6ece3e162082",
+                            Id = "65058ab0-1bef-445d-abbd-df73c25b0e87",
                             Name = "customer",
                             NormalizedName = "CUSTOMER"
                         });

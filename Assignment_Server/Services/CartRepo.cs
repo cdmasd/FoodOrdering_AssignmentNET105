@@ -1,5 +1,6 @@
 ﻿using Assignment_Server.Data;
 using Assignment_Server.Interfaces;
+using Assignment_Server.Mapper;
 using Assignment_Server.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
@@ -72,6 +73,21 @@ namespace Assignment_Server.Services
                 _db.CartDetails.Remove(item);
             }
             _db.SaveChanges();
+        }
+
+        public IEnumerable<ListCartDetail> getCart(string UserId)
+        {
+            var cartDetail = from c in _db.Carts
+                             join cd in _db.CartDetails on c.CartId equals cd.CartId
+                             join p in _db.Foods on cd.FoodId equals p.FoodId
+                             where c.UserId == UserId
+                             select new ListCartDetail
+                             {
+                                 Food = p.toFoodDTO(),
+                                 Quantity = cd.Quantity,
+                                 Total = cd.Total
+                             };
+            return cartDetail;
         }
     }
 }

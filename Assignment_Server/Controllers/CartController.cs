@@ -59,16 +59,7 @@ namespace Assignment_Server.Controllers
         public IActionResult GetCart()
         {
             var user = _usermanager.GetUserId(User);
-            var cartDetail = from c in _db.Carts
-                             join cd in _db.CartDetails on c.CartId equals cd.CartId
-                             join p in _db.Foods on cd.FoodId equals p.FoodId
-                             where c.UserId == user
-                             select new
-                             {
-                                 Food = p.toFoodDTO(),
-                                 quantity = cd.Quantity,
-                                 total = cd.Total
-                             };
+            var cartDetail = _cart.getCart(user);
             return Ok(cartDetail);
         }
 

@@ -28,6 +28,7 @@ builder.Services.AddScoped<IFoodRepo, FoodRepo>();
 builder.Services.AddScoped<IFoodImage, FoodImageRepo>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICartRepo,CartRepo>();
+builder.Services.AddScoped<IOrderRepo,OrderRepo>();
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
