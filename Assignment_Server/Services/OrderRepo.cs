@@ -15,9 +15,9 @@ namespace Assignment_Server.Services
             return order;
         }
 
-        public void AddOrderDetail(OrderDetail orderdetail)
+        public void AddOrderDetail(IEnumerable<OrderDetail> orderdetails)
         {
-            _db.OrderDetails.Add(orderdetail);
+            _db.OrderDetails.AddRange(orderdetails);
             _db.SaveChanges();
         }
     }

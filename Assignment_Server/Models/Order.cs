@@ -22,10 +22,10 @@ namespace Assignment_Server.Models
         [Required]
         public string PaymentType { get; set; } = string.Empty;
         [Required]
-        public string PaymentStatus { get; set; } = string.Empty;
+        public string PaymentStatus { get; set; } = "Chưa thanh toán";
         [Required]
         public string OrderStatus { get; set; } = "Đang chuẩn bị";
-        public string? note { get; set; }
+        public string? note { get; set; } = string.Empty;
 
         // Navigation
         public virtual User User { get; set; }

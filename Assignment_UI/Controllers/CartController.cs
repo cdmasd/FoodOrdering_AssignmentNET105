@@ -35,6 +35,7 @@ namespace Assignment_UI.Controllers
             {
                 string data = await response.Content.ReadAsStringAsync();
                 cart = JsonConvert.DeserializeObject<List<CartDetail>>(data);
+                HttpContext.Session.SetString("CartCount", cart.Count.ToString());
             }
             return View(cart);
         }

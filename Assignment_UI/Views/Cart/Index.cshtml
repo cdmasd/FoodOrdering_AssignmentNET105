@@ -34,17 +34,22 @@
             }
         </tbody>
     </table>
-}
-<div class="row">
-    <div class="col-6 text-center">Total pay : <span class="fw-bold">@Model.Sum(x => x.Total).ToString("##,##") VNĐ</span></div>
-    <div class="col-6 d-flex justify-content-around">
-        @if (!Model.Any())
-        {
-            <a asp-action="RemoveAll" asp-controller="Cart" class="btn btn-danger" hidden>Remove All</a>
-        } else
-        {
+    <div class="row">
+        <div class="col-6 text-center">Total pay : <span class="fw-bold">@Model.Sum(x => x.Total).ToString("##,##") VNĐ</span></div>
+        <div class="col-6 d-flex justify-content-around">
             <a asp-action="RemoveAll" asp-controller="Cart" class="btn btn-danger">Remove All</a>
-        }
-        <a asp-action="Payment" class="btn btn-success">Payment -></a>
+            <a asp-action="Payment" asp-controller="Order" class="btn btn-success">Payment -></a>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <table class="table table-hover table-bordered">
+        <thead class="table-primary text-center">
+            <tr>
+                <td>Chưa thêm món ăn nào !</td>
+                <td> <a asp-action="Index" asp-controller="Food" class="btn btn-info">Lựa món ăn</a></td>
+            </tr>
+        </thead>
+    </table>
+}

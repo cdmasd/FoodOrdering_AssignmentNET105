@@ -5,6 +5,6 @@ namespace Assignment_Server.Interfaces
     public interface IOrderRepo
     {
         Order AddOrder(Order order);
-        void AddOrderDetail(OrderDetail orderdetail);
+        void AddOrderDetail(IEnumerable<OrderDetail> orderdetails);
     }
 }

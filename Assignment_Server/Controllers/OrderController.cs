@@ -35,23 +35,15 @@ namespace Assignment_Server.Controllers
                     note = create.note
                 };
                 var createdOrder = _order.AddOrder(order);
-                List<OrderDetail> orderDetail = new List<OrderDetail>();
-                foreach (var item in cart)
+                var orderDetails = cart.Select(item => new OrderDetail
                 {
-                    var newitem = new OrderDetail
-                    {
-                        OrderId = createdOrder.OrderId,
-                        FoodId = item.Food.FoodId,
-                        Quantity = item.Quantity,
-                        UnitPrice = item.Food.UnitPrice,
-                        Total = item.Total,
-                    };
-                    orderDetail.Add(newitem);
-                }
-                foreach(var item in orderDetail)
-                {
-                    _order.AddOrderDetail(item);
-                }
+                    OrderId = createdOrder.OrderId,
+                    FoodId = item.Food.FoodId,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.Food.UnitPrice,
+                    Total = item.Total,
+                });
+                _order.AddOrderDetail(orderDetails);
                 return Ok();
             }
             return BadRequest(ModelState);
