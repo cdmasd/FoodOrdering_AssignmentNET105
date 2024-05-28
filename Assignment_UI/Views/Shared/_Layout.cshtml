@@ -53,7 +53,7 @@
                             <li class="nav-item dropdown list-unstyled" style="cursor : pointer">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Chào, @(Context.Session.Get<UserViewModel>("userLogined").FullName)</a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Thông tin tài khoản</a></li>
+                                    <li><a class="dropdown-item" asp-action="UpdateInfo" asp-controller="Auth">Thông tin tài khoản</a></li>
                                     <li><a class="dropdown-item" href="#">Đơn hàng</a></li>
                                     <li><a class="dropdown-item" href="#">Đổi mật khẩu</a></li>
                                     <li><a class="dropdown-item" asp-action="Logout" asp-controller="Auth" asp-route-token="@Context.Session.GetString("Token")">Đăng xuất</a></li>

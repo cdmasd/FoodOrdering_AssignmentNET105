@@ -1,0 +1,37 @@
+﻿@model Assignment_UI.ViewModel.UpdateUserViewModel;
+@{
+    ViewData["title"] = "Information";
+}
+<div class="container my-3">
+    <div class="card box-shadow-card">
+        <div class="card-header h3 fw-bold text-center text-uppercase bg-warning text-white">User Information</div>
+        <div class="card-body">
+            <form asp-action="UpdateInfo" asp-controller="Auth" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <img src="@Model.UserInfo.avatarUrl" class="mb-3 rounded-pill" width="150px" height="150px" style="object-fit : cover"/>
+                    <input class="form-control w-25 text-center" asp-for="AvatarFile" />
+                    <span asp-validation-for="AvatarFile" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="UserInfo.fullName"></label>
+                    <input asp-for="UserInfo.fullName" class="form-control" />
+                    <span asp-validation-for="UserInfo.fullName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="UserInfo.Address"></label>
+                    <input asp-for="UserInfo.Address" class="form-control" />
+                    <span asp-validation-for="UserInfo.Address" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="UserInfo.PhoneNumber"></label>
+                    <input asp-for="UserInfo.PhoneNumber" class="form-control" />
+                    <span asp-validation-for="UserInfo.PhoneNumber" class="text-danger"></span>
+                </div>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-outline-warning">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

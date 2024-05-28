@@ -2,12 +2,22 @@
 using Assignment_Server.Models;
 using Assignment_Server.Models.DTO.User;
 using Assignment_Server.Services;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Assignment_Server.Controllers
 {
@@ -106,5 +116,96 @@ namespace Assignment_Server.Controllers
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Logout successful" });
         }
+
+        [Authorize]
+        [HttpGet("get-info")]
+        public async Task<IActionResult> GetInfo()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var userinfo = new UserInfo
+            {
+                fullName = user.FullName,
+                Address = user.Address,
+                avatarUrl = user.AvatarUrl,
+                PhoneNumber = user.PhoneNumber
+            };
+            return Ok(userinfo);
+        }
+
+        [HttpPut("update")]
+        [Authorize]
+        public async Task<IActionResult> Update([FromBody] UserInfo userInfo)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if(user.FullName != userInfo.fullName)
+                user.FullName = userInfo.fullName;
+
+            if (user.Address != userInfo.Address)
+                user.Address = userInfo.Address;
+
+            if (user.AvatarUrl != userInfo.avatarUrl)
+                user.AvatarUrl = userInfo.avatarUrl;
+
+            if (user.PhoneNumber != userInfo.PhoneNumber)
+                user.PhoneNumber = userInfo.PhoneNumber;
+            var updateuser = await _userManager.UpdateAsync(user);
+            if (updateuser.Succeeded)
+            {
+                return Ok(new { message = "Updated", user });
+            }
+            return BadRequest("Update fail");
+        }
+
+
+
+
+
+
+
+
+        [HttpGet("login-google")]
+        public IActionResult GoogleLogin()
+        {
+            var authenticationProperties = new AuthenticationProperties { RedirectUri = Url.Action("signin-google") };
+            return Challenge(authenticationProperties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("signin-google")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+                return BadRequest("External authentication error");
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new User { UserName = email, Email = email };
+                await _userManager.CreateAsync(user);
+                await _userManager.AddToRoleAsync(user, "customer");
+            }
+
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true); // Bỏ qua two-factor authentication
+
+            if (signInResult.Succeeded)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                return Ok(new UserReturn
+                {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    Token = _tokenService.CreateToken(user, roles)
+                });
+            }
+            return BadRequest("Failed to sign in.");
+        }
+
     }
 }

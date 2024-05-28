@@ -27,14 +27,7 @@ namespace Assignment_UI.Controllers
                 TempData["error"] = "Please login first";
                 return RedirectToAction("Login", "Auth");
             }
-            var resquest = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/cart-details");
-            resquest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-            var response = await _client.SendAsync(resquest);
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadAsStringAsync();
-                ViewBag.cartdetails = JsonConvert.DeserializeObject<List<CartDetail>>(data);
-            }
+            await getCartDetails();
             return View();
         }
 
@@ -45,42 +38,48 @@ namespace Assignment_UI.Controllers
             {
                 if(order.PaymentType == "COD")
                 {
-                    var resquest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Order");
-                    resquest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-                    resquest.Content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
-                    var response = await _client.SendAsync(resquest);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var deleteCart = new HttpRequestMessage(HttpMethod.Delete, _client.BaseAddress + $"/Cart/cart-details");
-                        deleteCart.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-                        var result = await _client.SendAsync(deleteCart);
-                        if (result.IsSuccessStatusCode)
-                        {
-                            HttpContext.Session.SetString("CartCount", "0");
-                            TempData["success"] = "Đơn hàng đã được đặt";
-                            return RedirectToAction("Index", "Home");
-                        }
-                    }
-                    else
-                    {
-                        TempData["error"] = "Phát sinh lỗi trong quá trình đặt đơn";
-                        return RedirectToAction("Payment", "Order");
-                    }
+                    return await COD(order);
                 }
                 return View();
             }else
             {
-                var resquest = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/cart-details");
-                resquest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-                var response = await _client.SendAsync(resquest);
-                if (response.IsSuccessStatusCode)
-                {
-                    var data = await response.Content.ReadAsStringAsync();
-                    ViewBag.cartdetails = JsonConvert.DeserializeObject<List<CartDetail>>(data);
-                }
+                await getCartDetails();
                 return View(order);
             }
+        }
 
+        private async Task<IActionResult> COD(Order order)
+        {
+            var resquest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Order");
+            resquest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+            resquest.Content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
+            var response = await _client.SendAsync(resquest);
+            if (response.IsSuccessStatusCode)
+            {
+                var deleteCart = new HttpRequestMessage(HttpMethod.Delete, _client.BaseAddress + $"/Cart/cart-details");
+                deleteCart.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                var result = await _client.SendAsync(deleteCart);
+                if (result.IsSuccessStatusCode)
+                {
+                    HttpContext.Session.SetString("CartCount", "0");
+                    TempData["success"] = "Đơn hàng đã được đặt";
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            TempData["error"] = "Phát sinh lỗi trong quá trình đặt đơn";
+            return RedirectToAction("Payment", "Order");
+        }
+
+        private async Task getCartDetails()
+        {
+            var resquest = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/cart-details");
+            resquest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(resquest);
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                ViewBag.cartdetails = JsonConvert.DeserializeObject<List<CartDetail>>(data);
+            }
         }
     }
 }
