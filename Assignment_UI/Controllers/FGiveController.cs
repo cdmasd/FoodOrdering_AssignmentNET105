@@ -1,5 +1,5 @@
 ﻿using Assignment_UI.Models;
-using Assignment_UI.ViewModel;
+using Assignment_UI.ViewModel.Category;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -61,6 +61,88 @@ namespace Assignment_UI.Controllers
                 TempData["error"] = response.Content.ReadAsStringAsync();
                 return View(categoryCreate);
             }
+        }
+
+        public async Task<IActionResult> DetailCate(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + $"/Category/{id}").Result;
+            Category category;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                category = JsonConvert.DeserializeObject<Category>(data);
+                return View(category);
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateCate(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + $"/Category/{id}").Result;
+            Category category;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                category = JsonConvert.DeserializeObject<Category>(data);
+                var upCate = new UpdateCategory
+                {
+                    Category = category
+                };
+                return View(upCate);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCate(UpdateCategory upCategory)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return View(upCategory);
+            }
+            if(upCategory.ImageFile != null && upCategory.ImageFile.Length > 0)
+            {
+                upCategory.Category.ImageUrl = await UploadImage(upCategory.ImageFile);
+            }
+            var request = new HttpRequestMessage(HttpMethod.Put, _client.BaseAddress + "/Category");
+            request.Content = new StringContent(JsonConvert.SerializeObject(upCategory.Category),Encoding.UTF8,"application/json");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["success"] = "Category Updated!";
+                return RedirectToAction("Categories");
+            }
+            else
+            {
+                TempData["error"] = response.Content.ReadAsStringAsync();
+            }
+            return View(upCategory);
+        }
+
+        public async Task<IActionResult> DeleteCate(int id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, _client.BaseAddress + $"/Category/{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["success"] = "Category Deleted";
+            } else
+            {
+                TempData["error"] = response.Content.ReadAsStringAsync();
+            }
+            return RedirectToAction("Categories");
         }
         #endregion
 

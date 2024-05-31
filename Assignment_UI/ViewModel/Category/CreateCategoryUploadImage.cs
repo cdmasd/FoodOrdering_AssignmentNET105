@@ -1,4 +1,4 @@
-﻿namespace Assignment_UI.ViewModel
+﻿namespace Assignment_UI.ViewModel.Category
 {
     public class CreateCategoryUploadImage
     {

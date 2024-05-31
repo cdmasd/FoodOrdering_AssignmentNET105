@@ -1,0 +1,40 @@
+﻿@model Assignment_UI.ViewModel.Category.UpdateCategory;
+@{
+    Layout = "_LayoutManage";
+    ViewData["title"] = "Category Update";
+}
+<div class="container my-5">
+    <div class="card" style="width:100%;">
+        <div class="card-header text-center h4">Food Update</div>
+        <form asp-action="UpdateCate" enctype="multipart/form-data">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5 text-center">
+                        <img src="@Model.Category.ImageUrl" width="200px" />
+                        <input class="form-control my-2" asp-for="ImageFile" />
+                    </div>
+                    <div class="col-7">
+
+                        <div class="mb-2">
+                            <label asp-for="Category.CategoryId"></label>
+                            <input class="form-control border-2" asp-for="@Model.Category.CategoryId" readonly />
+                        </div>
+                        <div class="mb-2">
+                            <label asp-for="Category.Name"></label>
+                            <input class="form-control border-2" asp-for="@Model.Category.Name" />
+                        </div>
+                        <div class="mb-2">
+                            <label asp-for="Category.ImageUrl"></label>
+                            <input class="form-control border-2" asp-for="@Model.Category.ImageUrl" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <a asp-action="Categories" class="btn btn-primary">Go Back</a>
+                <button type="submit" class="btn btn-warning">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
