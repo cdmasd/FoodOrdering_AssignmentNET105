@@ -1,0 +1,41 @@
+﻿@model Assignment_UI.ViewModel.Food.UploadCreateFood;
+@{
+    Layout = "_LayoutManage";
+    ViewData["title"] = "Create Food";
+}
+<div class="container my-3" style="height : 500px;">
+    <div class="d-flex justify-content-center align-items-center h-100">
+        <div class="card" style="width:60%;">
+            <div class="card-header text-center h4">Create new food</div>
+            <div class="card-body">
+                <form asp-action="CreateFood" asp-controller="FGive" enctype="multipart/form-data">
+                    <div class="my-2">
+                        <label asp-for="ImageFile"></label>
+                        <input class="form-control border-2" asp-for="@Model.ImageFile" />
+                    </div>
+                    <div class="my-2">
+                        <label asp-for="Food.Name"></label>
+                        <input class="form-control border-2" asp-for="@Model.Food.Name" placeholder="Input food name" />
+                        <span class="text-danger" asp-validation-for="@Model.Food.Name"></span>
+                    </div>
+                    <div class="my-2">
+                        <label asp-for="Food.UnitPrice"></label>
+                        <input class="form-control border-2" asp-for="@Model.Food.UnitPrice" placeholder="Input unit price of food" />
+                        <span class="text-danger" asp-validation-for="@Model.Food.UnitPrice"></span>
+                    </div>
+                    <div class="my-2">
+                        <label asp-for="@Model.Food.CategoryID" class="form-label">Category <span class="text-danger">*</span></label>
+                        <select asp-for="@Model.Food.CategoryID" class="form-select">
+                            <option value="2">Burger</option>
+                            <option value="3">Gà Rán</option>
+                            <option value="4">Thức Uống</option>
+                            <option value="6">Ăn Vặt</option>
+                            <option value="10">Combo</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

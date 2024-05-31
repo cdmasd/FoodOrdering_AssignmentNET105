@@ -1,6 +1,9 @@
 ﻿using Assignment_UI.Models;
+using Assignment_UI.ViewModel;
 using Assignment_UI.ViewModel.Category;
+using Assignment_UI.ViewModel.Food;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
@@ -20,6 +23,8 @@ namespace Assignment_UI.Controllers
         {
             var categories = await getCategories();
             ViewBag.Catecount = categories.Count;
+            var foods = await GetFood();
+            ViewBag.Foodcount = foods.Count;
             return View();
         }
 
@@ -146,7 +151,59 @@ namespace Assignment_UI.Controllers
         }
         #endregion
 
+        #region Food
 
+        public async Task<IActionResult> Food(int? page)
+        {
+            var foodPagination = await GetFoodPagination(page);
+            return View(foodPagination);
+        }
+
+        [HttpGet]
+        public IActionResult CreateFood()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateFood(UploadCreateFood createFood)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(createFood);
+            }
+            if(createFood.ImageFile != null && createFood.ImageFile.Length > 0)
+            {
+                createFood.Food.mainImage = await UploadImage(createFood.ImageFile);
+            }
+            var request = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Food");
+            request.Content = new StringContent(JsonConvert.SerializeObject(createFood.Food),Encoding.UTF8,"application/json");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if(response.IsSuccessStatusCode)
+            {
+                TempData["success"] = "Added new food!";
+                return RedirectToAction("Food");
+            }
+            else
+            {
+                TempData["error"] = response.Content.ReadAsStringAsync();
+                return View(createFood);
+            }
+        }
+
+        public async Task<IActionResult> DeleteFood(int id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, _client.BaseAddress + $"/Food/{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["success"] = "Food deleted!";
+            }
+            return RedirectToAction("Food");
+        }
+        #endregion
 
 
 
@@ -156,6 +213,42 @@ namespace Assignment_UI.Controllers
 
 
         #region Method
+
+        public async Task<List<Food>> GetFood()
+        {
+            var foods = new List<Food>();
+            HttpResponseMessage response = _client.GetAsync(baseAddress + $"/Food/?page=1&pageSize=50").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                foods = JsonConvert.DeserializeObject<List<Food>>(data);
+                return foods;
+            }
+            return null;
+        }
+        public async Task<ProductVM> GetFoodPagination(int? page)
+        {
+            int pageNumber = (page ?? 1);
+            int pageSize = 5;
+            var foods = new List<Food>();
+            HttpResponseMessage response = _client.GetAsync(baseAddress + $"/Food/?page={pageNumber}&pageSize={pageSize}").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                foods = JsonConvert.DeserializeObject<List<Food>>(data);
+                var foodPaging = new ProductVM()
+                {
+                    Foods = foods,
+                    pageNumber = pageNumber,
+                    pageSize = pageSize,
+                    totalItem = foods.Count,
+                    pageCount = (int)Math.Ceiling(31 / (double)pageSize)
+                };
+                return foodPaging;
+            }
+            return null;
+        }
+
         public async Task<List<Category>> getCategories()
         {
             List<Category> categories = new List<Category>();

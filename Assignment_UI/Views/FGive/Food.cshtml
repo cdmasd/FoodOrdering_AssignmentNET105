@@ -1,0 +1,54 @@
+﻿@model Assignment_UI.ViewModel.ProductVM;
+@{
+    Layout = "_LayoutManage";
+    ViewData["title"] = "Foods";
+}
+<table class="table table-hover table-bordered text-center my-4">
+    <thead class="table-warning">
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>View</th>
+            <th>Image</th>
+            <th>CategoryId</th>
+            <th>
+                <a asp-action="CreateFood" class="btn btn-sm btn-success">Add food</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Foods)
+        {
+            <tr class="align-middle">
+                <td>@item.Name</td>
+                <td>@item.UnitPrice.ToString("##,##")đ</td>
+                <td>@item.View</td>
+                <td><img src="@item.mainImage" width="50px" /></td>
+                <td>@item.CategoryId</td>
+                <td>
+                    <a asp-action="DetailFood" asp-controller="FGive" asp-route-id="@item.FoodId" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="UpdateFood" asp-controller="FGive" asp-route-id="@item.FoodId" class="btn btn-sm btn-warning">Update</a>
+                    <a asp-action="DeleteFood" asp-controller="FGive" asp-route-id="@item.FoodId" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item @(Model.pageNumber == 1 ? "disabled": "")">
+            <a class="page-link" asp-controller="FGive" asp-action="Food" asp-route-page="@(Model.pageNumber - 1)"> Previous </a>
+        </li>
+        @for (var pg = 1; pg <= Model.pageCount; pg++)
+        {
+            <li class="page-item @(pg == Model.pageNumber ? "active" :"")">
+                <a class="page-link" asp-controller="FGive" asp-action="Food" asp-route-page="@pg"> @pg </a>
+            </li>
+        }
+        <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled": "")">
+            <a class="page-link" asp-controller="FGive" asp-action="Food" asp-route-page="@(Model.pageNumber + 1)"> Next </a>
+        </li>
+    </ul>
+
+</div>
