@@ -1,0 +1,27 @@
+﻿@model Assignment_UI.ViewModel.CreateCategoryUploadImage;
+@{
+    Layout = "_LayoutManage";
+    ViewData["title"] = "Create Category";
+}
+<div class="container my-3" style="height : 500px;">
+    <div class="d-flex justify-content-center align-items-center h-100">
+        <div class="card" style="width:60%;">
+            <div class="card-header text-center h4">Create new category</div>
+            <div class="card-body">
+                <form asp-action="CreateCate" asp-controller="FGive" enctype="multipart/form-data">
+                    <div class="my-2">
+                        <label asp-for="ImgFile"></label>
+                        <input class="form-control border-2" asp-for="@Model.ImgFile" />
+                    </div>
+                    <div class="my-2">
+                        <label asp-for="category.Name"></label>
+                        <input class="form-control border-2" asp-for="@Model.category.Name" placeholder="Input category name" />
+                    </div>
+                    <input class="form-control border-2" asp-for="@Model.category.ImageUrl" hidden/>
+                    <div class="text-danger" asp-validation-summary="All"></div>
+                    <button type="submit" class="btn btn-success">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

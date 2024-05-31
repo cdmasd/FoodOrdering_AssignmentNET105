@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FoodGive</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Assignment_UI.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/animate.css" />
+    <style>
+        .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+            background-color: rgb(244, 189, 97);
+            color : white !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-3 box-shadow-edit">
+                <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px; height : 550px;">
+                    <div class="h2 text-center fw-bold my-3"><a asp-action="Index" asp-controller="Home" class="text-decoration-none text-dark">Food<span class="text-warning">Give</span></a></div>
+                    <hr>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item mb-2">
+                            <a asp-action="Index" class="nav-link">
+                                <div class="d-flex justify-content-around align-items-center">
+                                    Dashboard
+                                    <i class="fa-solid fa-chart-line"></i>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a asp-action="Categories" class="nav-link">
+                                <div class="d-flex justify-content-around align-items-center">
+                                    Category
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a asp-action="Index" class="nav-link">
+                                <div class="d-flex justify-content-around align-items-center">
+                                    Food
+                                    <i class="fa-solid fa-utensils"></i>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a asp-action="Index" class="nav-link">
+                                <div class="d-flex justify-content-around align-items-center">
+                                    Order
+                                    <i class="fa-solid fa-receipt"></i>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-9">
+                @RenderBody()
+                <partial name="_Notificate" />
+            </div>
+        </div>
+    </div>
+    <script src="~/js/wow.min.js"></script>
+    <script>
+        new WOW().init();
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

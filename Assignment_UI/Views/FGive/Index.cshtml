@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "_LayoutManage";
+    ViewData["title"] = "Dashboard";
+}
+<div class="container my-5 mx-1">
+    <div class="row">
+        <div class="col-6">
+            <a asp-action="Categories" class="text-decoration-none">
+                <div class="card text-center fw-bold bg-info text-white">
+                    <div class="card-header h4">CATEGORIES</div>
+                    <div class="card-body h3">@ViewBag.Catecount</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6">
+            <a asp-action="Category" class="text-decoration-none">
+                <div class="card text-center fw-bold bg-warning text-white">
+                    <div class="card-header h4">FOODS</div>
+                    <div class="card-body h3">5</div>
+                </div>
+            </a>
+        </div>
+        <div class="col mt-3">
+            <a asp-action="Category" class="text-decoration-none">
+                <div class="card text-center fw-bold bg-success text-white">
+                    <div class="card-header h4">ORDERS</div>
+                    <div class="card-body h3">5</div>
+                </div>
+            </a>
+        </div>
+        <div class="col mt-3">
+            <a asp-action="Category" class="text-decoration-none">
+                <div class="card text-center fw-bold bg-danger text-white">
+                    <div class="card-header h4">PROFIT</div>
+                    <div class="card-body h3">99,999,999 VNĐ</div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+</div>
