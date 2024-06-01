@@ -1,0 +1,48 @@
+﻿@model Assignment_UI.ViewModel.Food.UpdateFood;
+@{
+    Layout = "_LayoutManage";
+    ViewData["title"] = "Category Detail";
+}
+<div class="container my-5">
+    <div class="card" style="width:100%;">
+        <div class="card-header text-center h4">Food Update</div>
+        <form asp-action="UpdateFood" enctype="multipart/form-data" method="post">
+            <input asp-for="@Model.food.FoodId" hidden />
+            <input asp-for="@Model.food.mainImage" hidden />
+            <input asp-for="@Model.food.View" hidden />
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5 text-center">
+                        <img src="@Model.food.mainImage" width="200px" />
+                        <input class="form-control mt-2" asp-for="@Model.ImageFile" />
+                    </div>
+                    <div class="col-7">
+                        <div class="mb-2">
+                            <label asp-for="food.Name"></label>
+                            <input class="form-control border-2" asp-for="@Model.food.Name" />
+                        </div>
+                        <div class="mb-2">
+                            <label asp-for="food.UnitPrice"></label>
+                            <input class="form-control border-2" asp-for="@Model.food.UnitPrice" />
+                        </div>
+                        <div class="mb-2">
+                            <label asp-for="@Model.food.CategoryId" class="form-label">Category <span class="text-danger">*</span></label>
+                            <select asp-for="@Model.food.CategoryId" class="form-select">
+                                <option value="2">Burger</option>
+                                <option value="3">Gà Rán</option>
+                                <option value="4">Thức Uống</option>
+                                <option value="6">Ăn Vặt</option>
+                                <option value="10">Combo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <a asp-action="Food" class="btn btn-primary">Go Back</a>
+                <button type="submit" class="btn btn-warning">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+

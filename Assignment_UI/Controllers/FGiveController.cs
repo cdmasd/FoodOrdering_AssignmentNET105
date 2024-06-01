@@ -192,6 +192,58 @@ namespace Assignment_UI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UpdateFood(int id)
+        {
+            Food food = new Food();
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + $"/Food/{id}");
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                food = JsonConvert.DeserializeObject<Food>(data);
+            }
+            var updateFood = new UpdateFood() { food = food };
+            return View(updateFood);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateFood(UpdateFood Update)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(Update);
+            }
+            if(Update.ImageFile != null && Update.ImageFile.Length > 0)
+            {
+                Update.food.mainImage = await UploadImage(Update.ImageFile);
+            }
+            var request = new HttpRequestMessage(HttpMethod.Put, _client.BaseAddress + "/Food");
+            request.Content = new StringContent (JsonConvert.SerializeObject(Update.food), Encoding.UTF8, "application/json");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["success"] = "Food Updated!";
+                return RedirectToAction("Food");
+            }
+            TempData["error"] = "Fail to Update!";
+            return View(Update);
+        }
+
+        public async Task<IActionResult> DetailFood(int id)
+        {
+            Food food = new Food();
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + $"/Food/{id}");
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                food = JsonConvert.DeserializeObject<Food>(data);
+            }
+            return View(food);
+        }
+
         public async Task<IActionResult> DeleteFood(int id)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, _client.BaseAddress + $"/Food/{id}");

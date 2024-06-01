@@ -21,7 +21,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarColor03">
-                    <ul class="navbar-nav ms-auto me-auto">
+                    <ul class="navbar-nav ms-auto me-auto" id="menu">
                         <li class="nav-item">
                             <a class="nav-link d-flex align-items-center" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-home me-1"></i>Home</a>
                         </li>
@@ -86,5 +86,14 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        const menuItems = document.querySelectorAll('#menu a');
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                menuItems.forEach(item => item.classList.remove('border-bottom', 'border-warning','border-2'));
+                item.classList.add('border-bottom', 'border-warning', 'border-2');
+            });
+        });
+    </script>
 </body>
 </html>

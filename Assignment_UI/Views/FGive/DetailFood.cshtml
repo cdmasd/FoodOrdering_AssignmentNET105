@@ -1,0 +1,41 @@
+﻿@model Food;
+@{
+    Layout = "_LayoutManage";
+    ViewData["title"] = "Food Detail";
+}
+<div class="container my-5">
+    <div class="card" style="width:100%;">
+        <div class="card-header text-center h4">Food Detail</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-5 text-center">
+                    <img src="@Model.mainImage" width="200px" />
+                </div>
+                <div class="col-7">
+
+                    <div class="mb-2">
+                        <label asp-for="Name"></label>
+                        <input class="form-control border-2" asp-for="@Model.Name" readonly />
+                    </div>
+                    <div class="mb-2">
+                        <label asp-for="UnitPrice"></label>
+                        <input class="form-control border-2" asp-for="@Model.UnitPrice" readonly />
+                    </div>
+                    <div class="mb-2">
+                        <label asp-for="View"></label>
+                        <input class="form-control border-2" asp-for="@Model.View" readonly />
+                    </div>
+                    <div class="mb-2">
+                        <label asp-for="CategoryId"></label>
+                        <input class="form-control border-2" asp-for="@Model.CategoryId" readonly />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <a asp-action="Food" class="btn btn-primary">Go Back</a>
+            <a asp-action="UpdateFood" asp-route-id="@Model.FoodId" class="btn btn-warning">Update this food</a>
+        </div>
+    </div>
+</div>
+
