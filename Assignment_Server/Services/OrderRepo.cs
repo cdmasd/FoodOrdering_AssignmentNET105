@@ -20,5 +20,19 @@ namespace Assignment_Server.Services
             _db.OrderDetails.AddRange(orderdetails);
             _db.SaveChanges();
         }
+
+        public Order Order(int id)
+        {
+            var order = _db.Orders.Find(id);
+            return order;
+        }
+
+        public IEnumerable<Order> getOrderId(string UserId)
+        {
+            var orders = _db.Orders.Where(o => o.UserId == UserId);
+            return orders;
+        }
+
+        public IEnumerable<Order> Orders => _db.Orders.ToList();
     }
 }

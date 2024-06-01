@@ -6,5 +6,8 @@ namespace Assignment_Server.Interfaces
     {
         Order AddOrder(Order order);
         void AddOrderDetail(IEnumerable<OrderDetail> orderdetails);
+        IEnumerable<Order> Orders { get; }
+        Order Order(int id);
+        IEnumerable<Order> getOrderId(string UserId);
     }
 }

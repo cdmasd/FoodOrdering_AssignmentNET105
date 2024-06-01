@@ -1,4 +1,5 @@
 ﻿using Assignment_Server.Interfaces;
+using Assignment_Server.Mapper;
 using Assignment_Server.Models;
 using Assignment_Server.Models.DTO.Order;
 using Microsoft.AspNetCore.Authorization;
@@ -47,6 +48,33 @@ namespace Assignment_Server.Controllers
                 return Ok();
             }
             return BadRequest(ModelState);
+        }
+
+        [HttpGet]
+        public IActionResult GetOrders()
+        {
+            var orders = _order.Orders.Select(x => x.toOrderDTO());
+            return Ok(orders);
+        }
+
+        [HttpGet("{id:int}")]
+        public IActionResult GetOrder([FromRoute]int id)
+        {
+            var order = _order.Order(id);
+            if(order != null)
+            {
+                return Ok(order.toOrderDTO());
+            }
+            return BadRequest("OrderId not existed");
+        }
+
+        [HttpGet("{UserId}")]
+        public IActionResult GetOrderByUser([FromRoute] string UserId)
+        {
+            var orders = _order.getOrderId(UserId);
+            if (orders.Any())
+                return Ok(orders);
+            return BadRequest("Don't have any order");
         }
     }
 }

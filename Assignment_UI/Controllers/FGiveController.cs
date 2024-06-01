@@ -2,6 +2,7 @@
 using Assignment_UI.ViewModel;
 using Assignment_UI.ViewModel.Category;
 using Assignment_UI.ViewModel.Food;
+using Assignment_UI.ViewModel.Order;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -255,6 +256,16 @@ namespace Assignment_UI.Controllers
             }
             return RedirectToAction("Food");
         }
+
+        #endregion
+
+
+        #region Order
+        public async Task<IActionResult> Order()
+        {
+            var orders = await GetOrders();
+            return View(orders);
+        }
         #endregion
 
 
@@ -263,8 +274,22 @@ namespace Assignment_UI.Controllers
 
 
 
-
         #region Method
+
+        public async Task<List<OrderVM>> GetOrders()
+        {
+            var Orders = new List<OrderVM>();
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Order");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                Orders = JsonConvert.DeserializeObject<List<OrderVM>>(data);
+                return Orders;
+            }
+            return null;
+        }
 
         public async Task<List<Food>> GetFood()
         {
