@@ -65,7 +65,7 @@ namespace Assignment_Server.Controllers
             {
                 return Ok(order.toOrderDTO());
             }
-            return BadRequest("OrderId not existed");
+            return BadRequest("Order is not existed");
         }
 
         [HttpGet("{UserId}")]

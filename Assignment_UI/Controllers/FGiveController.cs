@@ -266,6 +266,22 @@ namespace Assignment_UI.Controllers
             var orders = await GetOrders();
             return View(orders);
         }
+        public async Task<IActionResult> OrderDetail(int id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get,_client.BaseAddress + $"/Order/{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if(response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                var order = JsonConvert.DeserializeObject<OrderVM>(data);
+                return View(order);
+            } else
+            {
+                TempData["error"] = await response.Content.ReadAsStringAsync();
+                return RedirectToAction("Order");
+            }
+        }
         #endregion
 
 
