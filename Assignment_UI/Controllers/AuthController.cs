@@ -1,5 +1,7 @@
 ﻿using Assignment_UI.Models;
 using Assignment_UI.ViewModel;
+using Assignment_UI.ViewModel.Order;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -132,6 +134,24 @@ namespace Assignment_UI.Controllers
                 }
             }
             return View(updateUser);
+        }
+
+        public async Task<IActionResult> Order()
+        {
+            var Orders = new List<OrderVM>();
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Order");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                Orders = JsonConvert.DeserializeObject<List<OrderVM>>(data);
+                return View(Orders);
+            } else
+            {
+                ViewBag.none = await response.Content.ReadAsStringAsync();
+                return View();
+            }
         }
 
         private async Task<string> UploadImage(IFormFile file)

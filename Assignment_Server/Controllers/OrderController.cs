@@ -68,10 +68,11 @@ namespace Assignment_Server.Controllers
             return BadRequest("Order is not existed");
         }
 
-        [HttpGet("{UserId}")]
-        public IActionResult GetOrderByUser([FromRoute] string UserId)
+        [HttpGet("OrderByUser")]
+        public IActionResult GetOrderByUser()
         {
-            var orders = _order.getOrderId(UserId);
+            var userId = _usermanager.GetUserId(User);
+            var orders = _order.getOrderId(userId);
             if (orders.Any())
                 return Ok(orders);
             return BadRequest("Don't have any order");

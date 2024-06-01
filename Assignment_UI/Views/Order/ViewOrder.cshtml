@@ -1,0 +1,52 @@
+﻿@model Assignment_UI.ViewModel.Order.OrderVM;
+@{
+    ViewData["title"] = "View Order";
+}
+<div class="container">
+    <div class="d-flex align-content-center">
+        <div class="card box-shadow-edit">
+            <div class="card-body row">
+                <div class="mb-2 col-6">
+                    <label asp-for="OrderId"></label>
+                    <input asp-for="OrderId" class="form-control" readonly />
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="FullName"></label>
+                    <input asp-for="FullName" class="form-control" readonly />
+                </div>
+                <div class="mb-2">
+                    <label asp-for="Address"></label>
+                    <textarea rows="3" asp-for="Address" class="form-control" readonly></textarea>
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="PhoneNumber"></label>
+                    <input asp-for="PhoneNumber" class="form-control" readonly />
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="PaymentType"></label>
+                    <input asp-for="PaymentType" class="form-control" readonly />
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="PaymentStatus"></label>
+                    <input asp-for="PaymentStatus" class="form-control" readonly />
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="OrderDate"></label>
+                    <input asp-for="OrderDate" class="form-control" readonly />
+                </div>
+                <div class="mb-2">
+                    <label asp-for="OrderStatus"></label>
+                    <input asp-for="OrderStatus" class="form-control" readonly />
+                </div>
+                @if (Model.note != null)
+                {
+                    <div class="mb-2">
+                        <label asp-for="note"></label>
+                        <input asp-for="note" class="form-control" readonly />
+                    </div>
+                }
+                <a asp-action="Cancel" asp-controller="Order" asp-route-id="@Model.OrderId" class="btn btn-danger">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 ﻿using Assignment_UI.Models;
+using Assignment_UI.ViewModel.Order;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -48,6 +49,24 @@ namespace Assignment_UI.Controllers
             }
         }
 
+        public async Task<IActionResult> ViewOrder(int id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + $"/Order/{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                var order = JsonConvert.DeserializeObject<OrderVM>(data);
+                return View(order);
+            }
+            else
+            {
+                TempData["error"] = await response.Content.ReadAsStringAsync();
+                return RedirectToAction("Order");
+            }
+        }
+
         private async Task<IActionResult> COD(Order order)
         {
             var resquest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Order");
@@ -81,5 +100,6 @@ namespace Assignment_UI.Controllers
                 ViewBag.cartdetails = JsonConvert.DeserializeObject<List<CartDetail>>(data);
             }
         }
+
     }
 }
