@@ -1,6 +1,7 @@
 ﻿@model Assignment_UI.ViewModel.Order.OrderVM;
 @{
     ViewData["title"] = "View Order";
+    Model.OrderDate.ToString("dd-mm-yyyy hh:m:ss");
 }
 <div class="container">
     <div class="d-flex align-content-center">
@@ -45,7 +46,8 @@
                         <input asp-for="note" class="form-control" readonly />
                     </div>
                 }
-                <a asp-action="Cancel" asp-controller="Order" asp-route-id="@Model.OrderId" class="btn btn-danger">Cancel</a>
+                <a asp-action="Order" asp-controller="Auth" class="btn btn-info col-auto mx-3">Go back</a>
+                <a asp-action="Cancel" asp-controller="Order" asp-route-id="@Model.OrderId" class="btn btn-primary col-auto">Cancel order</a>
             </div>
         </div>
     </div>

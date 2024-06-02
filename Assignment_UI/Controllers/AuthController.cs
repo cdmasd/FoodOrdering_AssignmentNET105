@@ -86,6 +86,36 @@ namespace Assignment_UI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(Register regis)
+        {
+            if (ModelState.IsValid)
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Auth/register");
+                request.Content = new StringContent(JsonConvert.SerializeObject(regis), Encoding.UTF8, "application/json");
+                var response = await _client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["success"] = "Register successfully!";
+                    return RedirectToAction("Login");
+                } else
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    var getReturn = JsonConvert.DeserializeObject<ErrorRegister[]>(data);
+                    ModelState.AddModelError("errorRegis", getReturn[0].description);
+                    return View(regis);
+                }
+            }
+            
+            return View(regis);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> UpdateInfo()
         {
             var token = HttpContext.Session.GetString("Token");
@@ -139,18 +169,19 @@ namespace Assignment_UI.Controllers
         public async Task<IActionResult> Order()
         {
             var Orders = new List<OrderVM>();
-            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Order");
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Order/OrderByUser");
             request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
             var response = await _client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 string data = response.Content.ReadAsStringAsync().Result;
                 Orders = JsonConvert.DeserializeObject<List<OrderVM>>(data);
-                return View(Orders);
+                return View(Orders.OrderByDescending(x=> x.OrderDate));
             } else
             {
                 ViewBag.none = await response.Content.ReadAsStringAsync();
-                return View();
+                Orders = null;
+                return View(Orders);
             }
         }
 

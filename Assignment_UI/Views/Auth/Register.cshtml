@@ -1,0 +1,42 @@
+﻿@model Register;
+@{
+    ViewData["title"] = "Register";
+}
+<div class="d-flex justify-content-center align-items-center">
+    <div class="card w-50 rounded-3 shadow">
+        <div class="card-header bg-warning text-white text-center h3 fw-bold">
+            Register
+        </div>
+        <div class="card-body">
+            <form asp-action="Register" method="post">
+                <div class="mb-2">
+                    <label class="mb-1">Fullname <span class="text-primary">(*)</span></label>
+                    <input asp-for="FullName" class="form-control border-1 border-warning rounded-1" placeholder="Phan Văn A" autofocus />
+                    <span class="text-primary" asp-validation-for="FullName"></span>
+                </div>
+                <div class="mb-2">
+                    <label class="mb-1">Username <span class="text-primary">(*)</span></label>
+                    <input asp-for="userName" class="form-control border-1 border-warning rounded-1" placeholder="anhyeuem3000" />
+                    <span class="text-primary" asp-validation-for="userName"></span>
+                </div>
+                <div class="mb-2">
+                    <label class="mb-1">Password <span class="text-primary">(*)</span></label>
+                    <input asp-for="password" class="form-control border-1 border-warning rounded-1" placeholder="tu1toichin" />
+                    <span class="text-primary" asp-validation-for="password"></span>
+                </div>
+                <div class="mb-2">
+                    <label asp-for="Email" class="mb-1"></label><span class="text-primary"> (*)</span>
+                    <input asp-for="Email" class="form-control border-1 border-warning rounded-1" placeholder="example@gmail.com" />
+                    <span class="text-primary" asp-validation-for="Email"></span>
+                </div>
+                <span class="text-primary text-center">@Html.ValidationMessage("errorRegis")</span>
+                <button type="submit" class="btn btn-outline-warning form-control rounded-3 mb-3">
+                    Register
+                </button>
+                <div class="mt-2 text-center">
+                    <span>Already have account ? <a asp-action="Login" asp-controller="Auth">Login</a></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

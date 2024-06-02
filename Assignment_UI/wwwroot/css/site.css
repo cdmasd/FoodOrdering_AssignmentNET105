@@ -25,11 +25,11 @@ body {
     box-shadow: 0 .2rem .7rem rgba(0, 0, 0, .35)
 }
 .nav-link {
-    color: #f4bd61 !important;
+    color: #d9230f !important;
 }
     .nav-link:focus, .nav-link:hover {
         font-weight: bold;
-        color: #383636 !important;
+        color: #af1100 !important;
     }
 .carousel-item {
     transition: transform 1s ease, opacity .5s ease-out;
