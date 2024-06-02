@@ -55,7 +55,7 @@
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" asp-action="UpdateInfo" asp-controller="Auth">Thông tin tài khoản</a></li>
                                     <li><a class="dropdown-item" asp-action="Order" asp-controller="Auth">Đơn hàng</a></li>
-                                    <li><a class="dropdown-item" href="#">Đổi mật khẩu</a></li>
+                                    <li><a class="dropdown-item" asp-action="changePass" asp-controller="Auth">Đổi mật khẩu</a></li>
                                     <li><a class="dropdown-item" asp-action="Logout" asp-controller="Auth" asp-route-token="@Context.Session.GetString("Token")">Đăng xuất</a></li>
                                 </ul>
                             </li>

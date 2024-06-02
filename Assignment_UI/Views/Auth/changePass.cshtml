@@ -1,0 +1,36 @@
+﻿@model Assignment_UI.ViewModel.ChangePass;
+@{
+    ViewData["title"] = "Change password";
+}
+<div class="d-flex justify-content-center align-items-center">
+    <div class="card w-50 rounded-3 shadow">
+        <div class="card-header bg-warning text-white text-center h3 fw-bold">
+            Change password
+        </div>
+        <div class="card-body">
+            <form asp-action="changePass" method="post">
+                <div class="mb-2">
+                    <label asp-for="OldPassword" class="mb-1"></label>
+                    <input asp-for="OldPassword" class="form-control border-1 border-warning rounded-1" autofocus />
+                    <span class="text-primary" asp-validation-for="OldPassword"></span>
+                </div>
+                <div class="mb-2">
+                    <label asp-for="NewPassword" class="mb-1"></label>
+                    <input type="password" asp-for="NewPassword" class="form-control border-1 border-warning rounded-1"  />
+                    <span class="text-primary" asp-validation-for="NewPassword"></span>
+                </div>
+                <div class="mb-2">
+                    <label asp-for="ConfirmPassword" class="mb-1"></label>
+                    <input type="password" asp-for="ConfirmPassword" class="form-control border-1 border-warning rounded-1" />
+                    <span class="text-primary" asp-validation-for="ConfirmPassword"></span>
+                </div>
+                <button type="submit" class="btn btn-outline-warning form-control rounded-3 mb-3">
+                    Change
+                </button>
+                <div class="mt-2 text-center">
+                    <span>Remember now ? <a asp-action="Login" asp-controller="Auth">Go to login</a></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

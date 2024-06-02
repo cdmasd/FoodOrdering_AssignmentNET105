@@ -185,6 +185,44 @@ namespace Assignment_UI.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult changePass()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> changePass(ChangePass changePass)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(changePass);
+            }
+            var request = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Auth/change-password");
+            request.Content = new StringContent(JsonConvert.SerializeObject(changePass),Encoding.UTF8, "application/json");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["success"] = await response.Content.ReadAsStringAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            return View(changePass);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         private async Task<string> UploadImage(IFormFile file)
         {
             string path = "";
@@ -201,6 +239,16 @@ namespace Assignment_UI.Controllers
             }
             return path;
         }
+
+
+
+
+
+
+
+
+
+
 
         [HttpGet]
         public async Task<IActionResult> LoginGoogle()

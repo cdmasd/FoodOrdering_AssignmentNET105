@@ -118,6 +118,36 @@ namespace Assignment_Server.Controllers
         }
 
         [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePass(ChangePassDTO changepass)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return BadRequest($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, changepass.OldPassword, changepass.NewPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                foreach (var error in changePasswordResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return BadRequest(ModelState);
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+
+            return Ok("Your password has been changed.");
+        }
+
+        [Authorize]
         [HttpGet("get-info")]
         public async Task<IActionResult> GetInfo()
         {
