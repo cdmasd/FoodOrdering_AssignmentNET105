@@ -1,4 +1,5 @@
 ﻿using Assignment_Server.Models;
+using Assignment_Server.Models.DTO.Order;
 
 namespace Assignment_Server.Interfaces
 {
@@ -9,5 +10,7 @@ namespace Assignment_Server.Interfaces
         IEnumerable<Order> Orders { get; }
         Order Order(int id);
         IEnumerable<Order> getOrderId(string UserId);
+        IEnumerable<OrderDetailDTO> GetOrderDetails(int OrderId);
+        decimal Profit();
     }
 }

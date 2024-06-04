@@ -26,6 +26,9 @@ namespace Assignment_UI.Controllers
             ViewBag.Catecount = categories.Count;
             var foods = await GetFood();
             ViewBag.Foodcount = foods.Count;
+            var orders = await GetOrders();
+            ViewBag.Ordercount = orders.Count;
+            ViewBag.Profit = await getProfit();
             return View();
         }
 
@@ -282,6 +285,7 @@ namespace Assignment_UI.Controllers
                 return RedirectToAction("Order");
             }
         }
+
         #endregion
 
 
@@ -291,8 +295,20 @@ namespace Assignment_UI.Controllers
 
 
         #region Method
+        private async Task<decimal> getProfit()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Order/Profit");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string profit = await response.Content.ReadAsStringAsync();
+                return decimal.Parse(profit);
+            }
+            return 0;
+        }
 
-        public async Task<List<OrderVM>> GetOrders()
+        private async Task<List<OrderVM>> GetOrders()
         {
             var Orders = new List<OrderVM>();
             var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Order");
@@ -307,7 +323,7 @@ namespace Assignment_UI.Controllers
             return null;
         }
 
-        public async Task<List<Food>> GetFood()
+        private async Task<List<Food>> GetFood()
         {
             var foods = new List<Food>();
             HttpResponseMessage response = _client.GetAsync(baseAddress + $"/Food/?page=1&pageSize=50").Result;
@@ -319,10 +335,11 @@ namespace Assignment_UI.Controllers
             }
             return null;
         }
-        public async Task<ProductVM> GetFoodPagination(int? page)
+
+        private async Task<ProductVM> GetFoodPagination(int? page)
         {
             int pageNumber = (page ?? 1);
-            int pageSize = 5;
+            int pageSize = 6;
             var foods = new List<Food>();
             HttpResponseMessage response = _client.GetAsync(baseAddress + $"/Food/?page={pageNumber}&pageSize={pageSize}").Result;
             if (response.IsSuccessStatusCode)
@@ -342,7 +359,7 @@ namespace Assignment_UI.Controllers
             return null;
         }
 
-        public async Task<List<Category>> getCategories()
+        private async Task<List<Category>> getCategories()
         {
             List<Category> categories = new List<Category>();
             HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/Category").Result;

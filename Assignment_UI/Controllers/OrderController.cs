@@ -66,6 +66,22 @@ namespace Assignment_UI.Controllers
                 return RedirectToAction("Order");
             }
         }
+        public async Task<IActionResult> OrderDetail(int id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get,baseAddress + $"/Order/Order-details/{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                var orderDetails = JsonConvert.DeserializeObject<IEnumerable<OrderDetails>>(data);
+                return View(orderDetails);
+            } else
+            {
+                TempData["error"] = await response.Content.ReadAsStringAsync();
+                return RedirectToAction("Order", "Auth");
+            }
+        }
 
         private async Task<IActionResult> COD(Order order)
         {

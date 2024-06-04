@@ -190,52 +190,5 @@ namespace Assignment_Server.Controllers
             return BadRequest("Update fail");
         }
 
-
-
-
-
-
-
-
-        [HttpGet("login-google")]
-        public IActionResult GoogleLogin()
-        {
-            var authenticationProperties = new AuthenticationProperties { RedirectUri = Url.Action("signin-google") };
-            return Challenge(authenticationProperties, GoogleDefaults.AuthenticationScheme);
-        }
-
-        [HttpGet("signin-google")]
-        public async Task<IActionResult> GoogleResponse()
-        {
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
-                return BadRequest("External authentication error");
-
-            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null)
-            {
-                user = new User { UserName = email, Email = email };
-                await _userManager.CreateAsync(user);
-                await _userManager.AddToRoleAsync(user, "customer");
-            }
-
-            var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true); // Bỏ qua two-factor authentication
-
-            if (signInResult.Succeeded)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-                return Ok(new UserReturn
-                {
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    FullName = user.FullName,
-                    Token = _tokenService.CreateToken(user, roles)
-                });
-            }
-            return BadRequest("Failed to sign in.");
-        }
-
     }
 }

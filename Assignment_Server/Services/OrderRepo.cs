@@ -2,6 +2,7 @@
 using Assignment_Server.Data.migrations;
 using Assignment_Server.Interfaces;
 using Assignment_Server.Models;
+using Assignment_Server.Models.DTO.Order;
 
 namespace Assignment_Server.Services
 {
@@ -31,6 +32,29 @@ namespace Assignment_Server.Services
         {
             var orders = _db.Orders.Where(o => o.UserId == UserId);
             return orders;
+        }
+
+        public IEnumerable<OrderDetailDTO> GetOrderDetails(int OrderId)
+        {
+            var orderDetails = _db.OrderDetails.Where(x => x.OrderId == OrderId).ToList();
+            List<OrderDetailDTO> ListDetail = new List<OrderDetailDTO>();
+            foreach(var detail in orderDetails)
+            {
+                Food food = _db.Foods.Find(detail.FoodId);
+                OrderDetailDTO detailDTO = new OrderDetailDTO();
+                detailDTO.Name = food.Name;
+                detailDTO.UnitPrice = detail.UnitPrice;
+                detailDTO.Quantity = detail.Quantity;
+                detailDTO.Total = detail.Total;
+                ListDetail.Add(detailDTO);
+            }
+            return ListDetail;
+        }
+
+        public decimal Profit()
+        {
+            var profit = _db.OrderDetails.Sum(x => x.Total);
+            return profit;
         }
 
         public IEnumerable<Order> Orders => _db.Orders.ToList();

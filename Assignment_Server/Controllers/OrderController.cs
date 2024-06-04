@@ -77,5 +77,22 @@ namespace Assignment_Server.Controllers
                 return Ok(orders);
             return BadRequest("Don't have any order");
         }
+
+        [HttpGet("Order-details/{OrderId:int}")]
+        public IActionResult GetOrderDetails([FromRoute]int OrderId)
+        {
+            var orderDetails = _order.GetOrderDetails(OrderId);
+            if(orderDetails != null)
+            {
+                return Ok(orderDetails);
+            }
+            return BadRequest("Order detail is not exist!");
+        }
+        [HttpGet("Profit")]
+        public decimal getProfit()
+        {
+            var profit = _order.Profit();
+            return profit;
+        }
     }
 }
