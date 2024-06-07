@@ -57,6 +57,18 @@ namespace Assignment_Server.Services
             return profit;
         }
 
+        public void UpdateOrderStatus(int OrderId,string message)
+        {
+            var order = _db.Orders.SingleOrDefault(Order => Order.OrderId == OrderId);
+            order.OrderStatus = message;
+            if(message == "Đã giao")
+            {
+                order.PaymentStatus = "Đã thanh toán";
+            }
+            _db.Orders.Update(order);
+            _db.SaveChanges();
+        }
+
         public IEnumerable<Order> Orders => _db.Orders.ToList();
     }
 }

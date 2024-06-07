@@ -12,5 +12,6 @@ namespace Assignment_Server.Interfaces
         IEnumerable<Order> getOrderId(string UserId);
         IEnumerable<OrderDetailDTO> GetOrderDetails(int OrderId);
         decimal Profit();
+        void UpdateOrderStatus(int OrderId,string message);
     }
 }

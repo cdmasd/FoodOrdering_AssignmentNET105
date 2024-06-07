@@ -13,6 +13,7 @@ namespace Assignment_Server.Models.DTO.Order
         public string PhoneNumber { get; set; } = string.Empty;
         [Required]
         public string PaymentType { get; set; } = string.Empty;
+        public string PaymentStatus { get; set; } = string.Empty;
         public string? note { get; set; } = string.Empty;
     }
 }

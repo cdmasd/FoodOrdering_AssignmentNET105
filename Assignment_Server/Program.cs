@@ -5,7 +5,6 @@ using Assignment_Server.Models;
 using Assignment_Server.Models.DTO;
 using Assignment_Server.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -51,16 +50,11 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie()
-    .AddGoogle(options =>
-{
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
+    options.Authority = builder.Configuration["Auth0:Audience"];
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -73,16 +67,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder =>
-        {
-            builder.WithOrigins("https://localhost:7211")
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
-});
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -122,7 +106,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
 

@@ -1,73 +1,58 @@
-﻿@model Assignment_UI.ViewModel.Order.OrderVM
-
+﻿@model Assignment_UI.ViewModel.Order.OrderVM;
 @{
-    ViewData["Title"] = "Order Detail";
-    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+    ViewData["title"] = "View Order";
+    Layout = "_LayoutManage";
 }
-
-<h1>OrderDetail</h1>
-
-<div>
-    <h4>OrderVM</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PaymentType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.note)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.note)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PaymentStatus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentStatus)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderStatus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderStatus)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+<div class="container mt-5">
+    <div class="d-flex align-content-center">
+        <div class="card box-shadow-edit">
+            <div class="card-body row">
+                <div class="mb-2 col-6">
+                    <label asp-for="OrderId"></label>
+                    <input asp-for="OrderId" class="form-control" readonly />
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="FullName"></label>
+                    <input asp-for="FullName" class="form-control" readonly />
+                </div>
+                <div class="mb-2">
+                    <label asp-for="Address"></label>
+                    <textarea rows="3" asp-for="Address" class="form-control" readonly></textarea>
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="PhoneNumber"></label>
+                    <input asp-for="PhoneNumber" class="form-control" readonly />
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="PaymentType"></label>
+                    <input asp-for="PaymentType" class="form-control" readonly />
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="PaymentStatus"></label>
+                    <input asp-for="PaymentStatus" class="form-control" readonly />
+                </div>
+                <div class="mb-2 col-6">
+                    <label asp-for="OrderDate"></label>
+                    <input asp-for="OrderDate" class="form-control" readonly />
+                </div>
+                <div class="mb-2">
+                    <label asp-for="OrderStatus"></label>
+                    <input asp-for="OrderStatus" class="form-control" readonly />
+                </div>
+                @if (Model.note != null)
+                {
+                    <div class="mb-2">
+                        <label asp-for="note"></label>
+                        <input asp-for="note" class="form-control" readonly />
+                    </div>
+                }
+                <a asp-action="Order" asp-controller="Fgive" class="btn btn-info col-auto mx-3">Go back</a>
+                <a asp-action="ViewFoodDetail" asp-controller="Fgive" asp-route-id="@Model.OrderId" class="btn btn-warning col-auto mx-3">View food order</a>
+                @if (Model.OrderStatus != "Đã giao" && Model.OrderStatus != "Đã huỷ đơn")
+                {
+                    <a asp-action="DoneOrder" asp-controller="Fgive" asp-route-id="@Model.OrderId" class="btn btn-success col-auto">Đã giao hàng</a>
+                }
+            </div>
+        </div>
+    </div>
 </div>

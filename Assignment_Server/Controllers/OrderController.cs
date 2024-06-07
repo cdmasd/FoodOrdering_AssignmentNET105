@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Assignment_Server.Controllers
 {
@@ -33,6 +34,7 @@ namespace Assignment_Server.Controllers
                     Address = create.Address,
                     PaymentType = create.PaymentType,
                     PhoneNumber = create.PhoneNumber,
+                    PaymentStatus = create.PaymentStatus,
                     note = create.note
                 };
                 var createdOrder = _order.AddOrder(order);
@@ -49,6 +51,7 @@ namespace Assignment_Server.Controllers
             }
             return BadRequest(ModelState);
         }
+
 
         [HttpGet]
         public IActionResult GetOrders()
@@ -93,6 +96,19 @@ namespace Assignment_Server.Controllers
         {
             var profit = _order.Profit();
             return profit;
+        }
+        [HttpPut("update/{OrderId:int}")]
+        public IActionResult UpdateOrder([FromRoute]int OrderId, [FromQuery]string message)
+        {
+            try
+            {
+                _order.UpdateOrderStatus(OrderId,message);
+                return Ok("Updated!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

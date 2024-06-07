@@ -1,4 +1,6 @@
-﻿using Assignment_UI.Models;
+﻿using Assignment_Server.Models.Momo;
+using Assignment_UI.Models;
+using Assignment_UI.ViewModel;
 using Assignment_UI.ViewModel.Order;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -41,6 +43,11 @@ namespace Assignment_UI.Controllers
                 {
                     return await COD(order);
                 }
+                if(order.PaymentType == "MOMO")
+                {
+                    HttpContext.Session.Set<Order>("order", order);
+                    return await Momo();
+                }
                 return View();
             }else
             {
@@ -82,6 +89,19 @@ namespace Assignment_UI.Controllers
                 return RedirectToAction("Order", "Auth");
             }
         }
+        public async Task<IActionResult> Cancel(int id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, _client.BaseAddress + $"/Order/update/{id}?message=%C4%90%C3%A3%20hu%E1%BB%B7%20%C4%91%C6%A1n");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["error"] = "Huỷ đơn hàng thành công!";
+                return RedirectToAction("Order", "Auth");
+            }
+            TempData["error"] = response.Content.ReadAsStringAsync();
+            return RedirectToAction("ViewOrder");
+        }
 
         private async Task<IActionResult> COD(Order order)
         {
@@ -116,6 +136,82 @@ namespace Assignment_UI.Controllers
                 ViewBag.cartdetails = JsonConvert.DeserializeObject<List<CartDetail>>(data);
             }
         }
+
+        #region Momo
+        private async Task<IActionResult> Momo()
+        {
+            await getCartDetails();
+            List<CartDetail> cartDetails = ViewBag.cartdetails;
+            string accessKey = "M8brj9K6E22vXoDB";
+            string serectkey = "nqQiVSgDMy809JoPF6OzP5OdBUB550Y4";
+            MomoRequest momoRequest = new MomoRequest();
+            momoRequest.partnerCode = "MOMO5RGX20191128";
+            momoRequest.partnerName = "Test Momo API Payment";
+            momoRequest.storeId = "Momo Test Store";
+            momoRequest.orderInfo = "Payment with momo";
+            momoRequest.redirectUrl = "https://localhost:7211/Order/MomoReturn";
+            momoRequest.ipnUrl = "https://localhost:7211";
+            momoRequest.requestType = "captureWallet";
+            momoRequest.amount = ((int)Math.Round(cartDetails.Sum(x => x.Total))).ToString();
+            momoRequest.orderId = Guid.NewGuid().ToString();
+            momoRequest.requestId = Guid.NewGuid().ToString();
+            momoRequest.extraData = "";
+            //Before sign HMAC SHA256 signature
+            string rawHash = "accessKey=" + accessKey +
+                "&amount=" + momoRequest.amount +
+                "&extraData=" + momoRequest.extraData +
+                "&ipnUrl=" + momoRequest.ipnUrl +
+                "&orderId=" + momoRequest.orderId +
+                "&orderInfo=" + momoRequest.orderInfo +
+                "&partnerCode=" + momoRequest.partnerCode +
+                "&redirectUrl=" + momoRequest.redirectUrl +
+                "&requestId=" + momoRequest.requestId +
+                "&requestType=" + momoRequest.requestType
+                ;
+            MomoSecurity crypto = new MomoSecurity();
+            //sign signature SHA256
+            momoRequest.signature = crypto.signSHA256(rawHash, serectkey);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://test-payment.momo.vn/v2/gateway/api/create");
+            request.Content = new StringContent(JsonConvert.SerializeObject(momoRequest), System.Text.Encoding.UTF8, "application/json");
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                var MomoResponse = JsonConvert.DeserializeObject<MomoResponse>(data);
+                return Redirect(MomoResponse.payUrl);
+            }
+            return NotFound("Something went wrong");
+        }
+
+        public async Task<IActionResult> MomoReturn()
+        {
+            var ResultCode = HttpContext.Request.Query["resultCode"];
+            if(ResultCode == "0")
+            {
+                var order = HttpContext.Session.Get<Order>("order");
+                order.PaymentStatus = "Đã thanh toán";
+                var resquest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Order");
+                resquest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                resquest.Content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
+                var response = await _client.SendAsync(resquest);
+                if (response.IsSuccessStatusCode)
+                {
+                    var deleteCart = new HttpRequestMessage(HttpMethod.Delete, _client.BaseAddress + $"/Cart/cart-details");
+                    deleteCart.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
+                    var result = await _client.SendAsync(deleteCart);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        HttpContext.Session.SetString("CartCount", "0");
+                        TempData["success"] = "Đơn hàng đã được đặt";
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
+            TempData["error"] = "Phát sinh lỗi trong quá trình đặt đơn";
+            return RedirectToAction("Payment", "Order");
+        }
+        #endregion
 
     }
 }

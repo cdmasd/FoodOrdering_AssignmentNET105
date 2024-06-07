@@ -3,45 +3,74 @@
     Layout = "_LayoutManage";
     ViewData["title"] = "Foods";
 }
-<table class="table table-hover table-bordered text-center my-4">
-    <thead class="table-warning">
-        <tr>
-            <th>Order ID</th>
-            <th>Payment Type</th>
-            <th>Order Date</th>
-            <th>Payment Status</th>
-            <th>Order Status</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr class="align-middle">
-                <td>@item.OrderId</td>
-                <td>@item.PaymentType</td>
-                <td>@item.OrderDate.ToString("dd-MM-yyyy HH:mm:ss")</td>
-                <td>
-                    @if(item.PaymentStatus == "Chưa thanh toán")
-                    {
-                        <div class="p-1 rounded-pill bg-danger text-white">@item.PaymentStatus</div>
-                    } else
-                    {
-                        <div class="p-1 rounded-pill bg-success text-white">@item.PaymentStatus</div>
-                    }
-                </td>
-                <td>
-                    @if (@item.OrderStatus == "Đang chuẩn bị")
-                    {
-                        <div class="p-1 rounded-pill bg-warning text-white">@item.OrderStatus</div>
-                    }
-                    else
-                    {
-                        <div class="p-1 rounded-pill bg-success text-white">@item.OrderStatus</div>
-                    }
-                </td>
-                <td> <a asp-action="OrderDetail" asp-route-id="@item.OrderId" class="btn btn-sm btn-outline-dark">View Detail</a></td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="d-flex justify-content-center align-items-center h-100">
+   <div class="container">
+       <form>
+            <div class="mb-3">
+                <label>Payment Status :</label>
+                <select class="form-control">
+                    <option>Đã thanh toán</option>
+                    <option>Chưa thanh toán</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Order Status :</label>
+
+                <select class="form-control">
+                    <option>Đã giao</option>
+                    <option>Đã huỷ đơn</option>
+                    <option>Đang chuẩn bị</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-info">Search</button>
+       </form>
+        <table class="table table-hover table-bordered text-center my-4">
+            <thead class="table-warning">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Payment Type</th>
+                    <th>Order Date</th>
+                    <th>Payment Status</th>
+                    <th>Order Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="align-middle">
+                        <td>@item.OrderId</td>
+                        <td>@item.PaymentType</td>
+                        <td>@item.OrderDate.ToString("dd-MM-yyyy HH:mm:ss")</td>
+                        <td>
+                            @if (item.PaymentStatus == "Chưa thanh toán")
+                            {
+                                <div class="p-1 rounded-pill bg-primary text-white">@item.PaymentStatus</div>
+                            }
+                            else
+                            {
+                                <div class="p-1 rounded-pill bg-success text-white">@item.PaymentStatus</div>
+                            }
+                        </td>
+                        <td>
+                            @if (@item.OrderStatus == "Đang chuẩn bị")
+                            {
+                                <div class="p-1 rounded-pill bg-warning text-white">@item.OrderStatus</div>
+                            }
+                            else if (item.OrderStatus == "Đã giao")
+                            {
+                                <div class="p-1 rounded-pill bg-success text-white">@item.OrderStatus</div>
+                            }
+                            else
+                            {
+                                <div class="p-1 rounded-pill bg-primary text-white">@item.OrderStatus</div>
+
+                            }
+                        </td>
+                        <td> <a asp-action="OrderDetail" asp-route-id="@item.OrderId" class="btn btn-sm btn-outline-dark">View Detail</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+   </div>
+</div>

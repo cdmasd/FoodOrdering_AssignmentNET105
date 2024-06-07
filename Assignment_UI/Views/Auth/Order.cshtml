@@ -42,9 +42,12 @@
                         {
                             <div class="p-2 badge bg-warning text-white">@item.OrderStatus</div>
                         }
-                        else
+                        else if(item.OrderStatus == "Đã giao")
                         {
                             <div class="p-2 badge bg-success text-white">@item.OrderStatus</div>
+                        } else
+                        {
+                            <div class="p-2 badge bg-primary text-white">@item.OrderStatus</div>
                         }
                     </td>
                     <td> <a asp-action="ViewOrder" asp-controller="Order" asp-route-id="@item.OrderId" class="btn btn-sm btn-outline-dark">View Detail</a></td>

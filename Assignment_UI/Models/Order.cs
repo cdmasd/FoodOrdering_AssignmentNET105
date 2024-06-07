@@ -13,6 +13,7 @@ namespace Assignment_UI.Models
         public string PhoneNumber { get; set; } = string.Empty;
         [Required]
         public string PaymentType { get; set; } = string.Empty;
+        public string PaymentStatus { get; set; } = "Chưa thanh toán";
         public string? note { get; set; }
     }
 }

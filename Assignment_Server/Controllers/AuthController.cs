@@ -2,10 +2,10 @@
 using Assignment_Server.Models;
 using Assignment_Server.Models.DTO.User;
 using Assignment_Server.Services;
+using CloudinaryDotNet.Actions;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -23,11 +26,12 @@ namespace Assignment_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(UserManager<User> um, ITokenService tokenService, SignInManager<User> sm) : ControllerBase
+    public class AuthController(UserManager<User> um, ITokenService tokenService, SignInManager<User> sm, IConfiguration config) : ControllerBase
     {
         private readonly SignInManager<User> _signInManager = sm;
         private readonly UserManager<User> _userManager = um;
         private readonly ITokenService _tokenService = tokenService;
+        private readonly IConfiguration _config = config;
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO login)
@@ -190,5 +194,89 @@ namespace Assignment_Server.Controllers
             return BadRequest("Update fail");
         }
 
+        [HttpGet("google-login")]
+        public IActionResult LoginWithGoogle()
+        {
+            var domain = _config["Auth0:Domain"];
+            var clientId = _config["Auth0:ClientId"];
+            var redirectUri = "https://localhost:7294/api/Auth/callback";
+
+            var loginUrl = $"https://{domain}/authorize?response_type=code&client_id={clientId}&redirect_uri={redirectUri}&scope=openid%20profile%20email";
+            return Redirect(loginUrl);
+        }
+
+        [HttpGet("callback")]
+        public async Task<IActionResult> CallBack(string code)
+        {
+            var domain = _config["Auth0:Domain"];
+            var clientId = _config["Auth0:ClientId"];
+            var clientSecret = _config["Auth0:ClientSecret"];
+            var redirectUri = "https://localhost:7294/api/Auth/callback";
+
+            var tokenClient = new HttpClient();
+            var tokenResponse = await tokenClient.PostAsync($"https://{domain}/oauth/token", new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "authorization_code"),
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("client_secret", clientSecret),
+                new KeyValuePair<string, string>("code", code),
+                new KeyValuePair<string, string>("redirect_uri", redirectUri)
+            }));
+
+            var tokenContent = await tokenResponse.Content.ReadAsStringAsync();
+            var tokenData = JsonConvert.DeserializeObject<Dictionary<string, object>>(tokenContent);
+            if (tokenData != null && tokenData.ContainsKey("id_token"))
+            {
+                var idToken = tokenData["id_token"];
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(idToken.ToString()) as JwtSecurityToken;
+                var email = jsonToken.Claims.First(claim => claim.Type == "email").Value;
+                var FullName = jsonToken.Claims.First(claim => claim.Type == "nickname").Value;
+                var picture = jsonToken.Claims.First(claim => claim.Type == "picture").Value;
+
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    user = new User
+                    {
+                        UserName = email,
+                        Email = email,
+                        FullName = FullName,
+                        AvatarUrl = picture,
+                    };
+                    var createdUser = await _userManager.CreateAsync(user);
+                    if (createdUser.Succeeded)
+                    {
+                        var roleResult = await _userManager.AddToRoleAsync(user, "customer");
+                        if (roleResult.Succeeded)
+                        {
+                            var roles = await _userManager.GetRolesAsync(user);
+                            return Ok(
+                                new UserReturn
+                                {
+                                    UserName = user.UserName,
+                                    Email = user.Email,
+                                    FullName = user.FullName,
+                                    Token = _tokenService.CreateToken(user, roles)
+                                }
+                            );
+                        }
+                        return StatusCode(500, roleResult.Errors);
+                    }
+                    return StatusCode(500, createdUser.Errors);
+                }
+                var roless = await _userManager.GetRolesAsync(user);
+                return Ok(
+                                new UserReturn
+                                {
+                                    UserName = user.UserName,
+                                    Email = user.Email,
+                                    FullName = user.FullName,
+                                    Token = _tokenService.CreateToken(user, roless)
+                                }
+                            );
+            }
+            return BadRequest("Đăng nhập thất bại.");
+        }
     }
 }

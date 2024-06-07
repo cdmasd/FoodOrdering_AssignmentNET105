@@ -285,7 +285,37 @@ namespace Assignment_UI.Controllers
                 return RedirectToAction("Order");
             }
         }
+        public async Task<IActionResult> ViewFoodDetail(int id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, baseAddress + $"/Order/Order-details/{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                var orderDetails = JsonConvert.DeserializeObject<IEnumerable<OrderDetails>>(data);
+                return View(orderDetails);
+            }
+            else
+            {
+                TempData["error"] = await response.Content.ReadAsStringAsync();
+                return RedirectToAction("Order", "FGive");
+            }
+        }
 
+        public async Task<IActionResult> DoneOrder(int id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, _client.BaseAddress + $"/Order/update/{id}?message=%C4%90%C3%A3%20giao");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["error"] = "Đổi trạng thái thành công!";
+                return RedirectToAction("Order", "Fgive");
+            }
+            TempData["error"] = response.Content.ReadAsStringAsync();
+            return RedirectToAction("ViewFoodDetail");
+        }
         #endregion
 
 

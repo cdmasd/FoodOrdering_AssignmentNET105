@@ -1,0 +1,41 @@
+﻿@model IEnumerable<OrderDetails>
+@{
+    ViewData["title"] = "Order Details";
+    Layout = "_LayoutManage";
+}
+<div class="d-flex justify-content-center align-items-center h-100">
+    <div class="container">
+        @if (Model.Any())
+        {
+            <table class="table table-hover table-bordered">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th>Name</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="align-middle">
+                            <td>@item.Name</td>
+                            <td>@item.UnitPrice.ToString("##,##") VNĐ</td>
+                            <td>
+                                @item.Quantity
+                            </td>
+                            <td>@item.Total.ToString("##,##") VNĐ</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-6 text-center">Total: <span class="fw-bold">@Model.Sum(x => x.Total).ToString("##,##") VNĐ</span></div>
+                <div class="col-6 d-flex justify-content-around">
+                    <a asp-action="Order" asp-controller="Fgive" class="btn btn-info">Go Back</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

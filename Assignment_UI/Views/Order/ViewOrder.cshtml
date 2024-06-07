@@ -1,9 +1,8 @@
 ﻿@model Assignment_UI.ViewModel.Order.OrderVM;
 @{
     ViewData["title"] = "View Order";
-    Model.OrderDate.ToString("dd-mm-yyyy hh:m:ss");
 }
-<div class="container">
+<div class=" container">
     <div class="d-flex align-content-center">
         <div class="card box-shadow-edit">
             <div class="card-body row">
@@ -48,7 +47,10 @@
                 }
                 <a asp-action="Order" asp-controller="Auth" class="btn btn-info col-auto mx-3">Go back</a>
                 <a asp-action="OrderDetail" asp-controller="Order" asp-route-id="@Model.OrderId" class="btn btn-warning col-auto mx-3">View food order</a>
-                <a asp-action="Cancel" asp-controller="Order" asp-route-id="@Model.OrderId" class="btn btn-primary col-auto">Cancel order</a>
+                @if (Model.OrderStatus != "Đang huỷ đơn" && Model.PaymentStatus == "Chưa thanh toán")
+                {
+                    <a asp-action="Cancel" asp-controller="Order" asp-route-id="@Model.OrderId" class="btn btn-primary col-auto">Cancel order</a>
+                }
             </div>
         </div>
     </div>

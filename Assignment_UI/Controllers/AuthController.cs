@@ -3,6 +3,7 @@ using Assignment_UI.ViewModel;
 using Assignment_UI.ViewModel.Order;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
@@ -209,20 +210,6 @@ namespace Assignment_UI.Controllers
             }
             return View(changePass);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         private async Task<string> UploadImage(IFormFile file)
         {
             string path = "";
@@ -253,21 +240,19 @@ namespace Assignment_UI.Controllers
         [HttpGet]
         public async Task<IActionResult> LoginGoogle()
         {
-            var response = await _client.GetAsync(_client.BaseAddress + "/Auth/login-google");
+            var response = await _client.GetAsync(_client.BaseAddress + "/Auth/google-login");
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("GoogleResponse");
+                return RedirectToAction("CallBack");
             }
             return NotFound();
         }
 
         [HttpGet]
-        public async Task<IActionResult> GoogleResponse()
+        public async Task<IActionResult> CallBack()
         {
-            // Lấy code từ query string trả về từ Google
             string code = Request.Query["code"];
-
-            var response = await _client.GetAsync(_client.BaseAddress + $"/Auth/signin-google?code={code}");
+            var response = await _client.GetAsync(_client.BaseAddress + $"/Auth/callback?code={code}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -279,7 +264,7 @@ namespace Assignment_UI.Controllers
                 HttpContext.Session.SetString("Token", userLogined.Token);
 
                 // Get cart
-                var request = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, _client.BaseAddress + "/Cart/cart-details");
+                var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + "/Cart/cart-details");
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", userLogined.Token);
                 var getCart = await _client.SendAsync(request);
                 var cart = new List<CartDetail>();
@@ -294,7 +279,7 @@ namespace Assignment_UI.Controllers
             else
             {
                 // Xử lý lỗi nếu có
-                ModelState.AddModelError("", "Đăng nhập bằng Google thất bại.");
+                ModelState.AddModelError("wronginfo",await response.Content.ReadAsStringAsync());
                 return View("Login");
             }
         }
