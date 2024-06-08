@@ -2,6 +2,7 @@
 using Assignment_UI.Models;
 using Assignment_UI.ViewModel;
 using Assignment_UI.ViewModel.Order;
+using Assignment_UI.ViewModel.VNPay;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -47,6 +48,11 @@ namespace Assignment_UI.Controllers
                 {
                     HttpContext.Session.Set<Order>("order", order);
                     return await Momo();
+                }
+                if(order.PaymentType == "VNPAY")
+                {
+                    HttpContext.Session.Set<Order>("order", order);
+                    return await VNPAY();
                 }
                 return View();
             }else
@@ -191,22 +197,64 @@ namespace Assignment_UI.Controllers
             {
                 var order = HttpContext.Session.Get<Order>("order");
                 order.PaymentStatus = "Đã thanh toán";
-                var resquest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress + "/Order");
-                resquest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-                resquest.Content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
-                var response = await _client.SendAsync(resquest);
-                if (response.IsSuccessStatusCode)
-                {
-                    var deleteCart = new HttpRequestMessage(HttpMethod.Delete, _client.BaseAddress + $"/Cart/cart-details");
-                    deleteCart.Headers.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-                    var result = await _client.SendAsync(deleteCart);
-                    if (result.IsSuccessStatusCode)
-                    {
-                        HttpContext.Session.SetString("CartCount", "0");
-                        TempData["success"] = "Đơn hàng đã được đặt";
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
+                return await COD(order);
+            }
+            TempData["error"] = "Phát sinh lỗi trong quá trình đặt đơn";
+            return RedirectToAction("Payment", "Order");
+        }
+        #endregion
+
+        #region VNPay
+        private async Task<IActionResult> VNPAY()
+        {
+            await getCartDetails();
+            List<CartDetail> cartDetails = ViewBag.cartdetails;
+
+
+            //Get Config Info
+            string vnp_Returnurl = "https://localhost:7211/Order/VNPReturn"; //URL nhan ket qua tra ve 
+            string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; //URL thanh toan cua VNPAY 
+            string vnp_TmnCode = "2DQGKKDA"; //Ma định danh merchant kết nối (Terminal Id)
+            string vnp_HashSecret = "UMTCVNGYSCWSWVEJCADPUEECDUCVHVNU"; //Secret Key
+
+            //Get payment input
+            OrderInfo order = new OrderInfo();
+            order.OrderId = DateTime.Now.Ticks; // Giả lập mã giao dịch hệ thống merchant gửi sang VNPAY
+            order.Amount = ((long)Math.Round(cartDetails.Sum(x => x.Total))); // Giả lập số tiền thanh toán hệ thống merchant gửi sang VNPAY 100,000 VND
+            order.Status = "0"; //0: Trạng thái thanh toán "chờ thanh toán" hoặc "Pending" khởi tạo giao dịch chưa có IPN
+            order.CreatedDate = DateTime.Now;
+            //Save order to db
+
+            VnPayLibrary vnpay = new VnPayLibrary();
+
+            vnpay.AddRequestData("vnp_Version", VnPayLibrary.VERSION);
+            vnpay.AddRequestData("vnp_Command", "pay");
+            vnpay.AddRequestData("vnp_TmnCode", vnp_TmnCode);
+            vnpay.AddRequestData("vnp_Amount", (order.Amount * 100).ToString()); //Số tiền thanh toán. Số tiền không mang các ký tự phân tách thập phân, phần nghìn, ký tự tiền tệ. Để gửi số tiền thanh toán là 100,000 VND (một trăm nghìn VNĐ) thì merchant cần nhân thêm 100 lần (khử phần thập phân), sau đó gửi sang VNPAY là: 10000000
+            vnpay.AddRequestData("vnp_BankCode", "VNBANK");
+            vnpay.AddRequestData("vnp_CreateDate", order.CreatedDate.ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_CurrCode", "VND");
+            vnpay.AddRequestData("vnp_IpAddr", ":1");
+            vnpay.AddRequestData("vnp_Locale", "vn");
+            vnpay.AddRequestData("vnp_OrderInfo", "Thanh toan don hang:" + order.OrderId);
+            vnpay.AddRequestData("vnp_OrderType", "other"); //default value: other
+
+            vnpay.AddRequestData("vnp_ReturnUrl", vnp_Returnurl);
+            vnpay.AddRequestData("vnp_TxnRef", order.OrderId.ToString()); // Mã tham chiếu của giao dịch tại hệ thống của merchant. Mã này là duy nhất dùng để phân biệt các đơn hàng gửi sang VNPAY. Không được trùng lặp trong ngày
+
+
+            string paymentUrl = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
+            return Redirect(paymentUrl);
+        }
+
+        public async Task<IActionResult> VNPReturn()
+        {
+            var ResponseCode = HttpContext.Request.Query["vnp_ResponseCode"];
+            if(ResponseCode == "00")
+            {
+                var order = HttpContext.Session.Get<Order>("order");
+                order.PaymentStatus = "Đã thanh toán";
+                return await COD(order);
             }
             TempData["error"] = "Phát sinh lỗi trong quá trình đặt đơn";
             return RedirectToAction("Payment", "Order");
