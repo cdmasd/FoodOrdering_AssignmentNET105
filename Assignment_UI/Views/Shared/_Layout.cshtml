@@ -52,7 +52,7 @@
                         {
                             <li class="nav-item dropdown list-unstyled" style="cursor : pointer">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Chào, @(Context.Session.Get<UserViewModel>("userLogined").FullName)</a>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu bg-primary">
                                     <li><a class="dropdown-item" asp-action="UpdateInfo" asp-controller="Auth">Thông tin tài khoản</a></li>
                                     <li><a class="dropdown-item" asp-action="Order" asp-controller="Auth">Đơn hàng</a></li>
                                     <li><a class="dropdown-item" asp-action="changePass" asp-controller="Auth">Đổi mật khẩu</a></li>

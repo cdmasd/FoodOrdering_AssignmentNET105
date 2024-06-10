@@ -153,6 +153,20 @@ namespace Assignment_UI.Controllers
             }
             return RedirectToAction("Categories");
         }
+
+        public async Task<IActionResult> SearchNameCate(string query)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + $"/Category/search-name/{query}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("bearer", HttpContext.Session.GetString("Token"));
+            var response = await _client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                List<Category> categories = JsonConvert.DeserializeObject<List<Category>>(data);
+                return View(categories);
+            }
+            return RedirectToAction("Categories", "Fgive");
+        }
         #endregion
 
         #region Food
@@ -258,6 +272,23 @@ namespace Assignment_UI.Controllers
                 TempData["success"] = "Food deleted!";
             }
             return RedirectToAction("Food");
+        }
+
+        public IActionResult SearchNameFood(string query)
+        {
+            var foods = new List<Food>();
+            var response = _client.GetAsync(baseAddress + $"/Food/name={query}").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                foods = JsonConvert.DeserializeObject<List<Food>>(data);
+                var foodPaging = new ProductVM()
+                {
+                    Foods = foods
+                };
+                return View(foodPaging);
+            }
+            return View();
         }
 
         #endregion

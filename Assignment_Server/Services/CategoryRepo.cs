@@ -37,5 +37,13 @@ namespace Assignment_Server.Services
             _db.SaveChanges();
             return category;
         }
+
+        public List<Category> SearchName(string name)
+        {
+            var cate = _db.Categories.Where(x => x.Name.Contains(name)).ToList();
+            if (cate != null)
+                return cate.ToList();
+            return null;
+        }
     }
 }

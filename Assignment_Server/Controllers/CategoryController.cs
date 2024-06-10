@@ -104,5 +104,19 @@ namespace Assignment_Server.Controllers
             });
             return Ok(foods);
         }
+
+        [Authorize(Roles ="admin")]
+        [HttpGet("search-name/{name}")]
+        public IActionResult SearchName([FromRoute]string name)
+        {
+            var cate = _cateService.SearchName(name);
+            if(cate != null)
+            {
+                return Ok(cate);
+            } else
+            {
+                return BadRequest("No product was found!");
+            }
+        }
     }
 }

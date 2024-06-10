@@ -243,15 +243,15 @@ namespace Assignment_UI.Controllers
             var response = await _client.GetAsync(_client.BaseAddress + "/Auth/google-login");
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("CallBack");
+               string url = await response.Content.ReadAsStringAsync();
+                return Redirect(url);
             }
             return NotFound();
         }
 
         [HttpGet]
-        public async Task<IActionResult> CallBack()
+        public async Task<IActionResult> CallBack(string code)
         {
-            string code = Request.Query["code"];
             var response = await _client.GetAsync(_client.BaseAddress + $"/Auth/callback?code={code}");
 
             if (response.IsSuccessStatusCode)
@@ -279,7 +279,7 @@ namespace Assignment_UI.Controllers
             else
             {
                 // Xử lý lỗi nếu có
-                ModelState.AddModelError("wronginfo",await response.Content.ReadAsStringAsync());
+                ModelState.AddModelError("wronginfo", await response.Content.ReadAsStringAsync());
                 return View("Login");
             }
         }

@@ -199,10 +199,16 @@ namespace Assignment_Server.Controllers
         {
             var domain = _config["Auth0:Domain"];
             var clientId = _config["Auth0:ClientId"];
-            var redirectUri = "https://localhost:7294/api/Auth/callback";
+            var redirectUri = "https://localhost:7294/api/Auth/getcode";
 
             var loginUrl = $"https://{domain}/authorize?response_type=code&client_id={clientId}&redirect_uri={redirectUri}&scope=openid%20profile%20email";
-            return Redirect(loginUrl);
+            return Ok(loginUrl);
+        }
+
+        [HttpGet("getcode")]
+        public async Task<IActionResult> GetCode(string code)
+        {
+            return Redirect($"https://localhost:7211/Auth/CallBack?code={code}");
         }
 
         [HttpGet("callback")]
@@ -239,7 +245,7 @@ namespace Assignment_Server.Controllers
                 {
                     user = new User
                     {
-                        UserName = email,
+                        UserName = FullName,
                         Email = email,
                         FullName = FullName,
                         AvatarUrl = picture,

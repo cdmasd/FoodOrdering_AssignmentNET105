@@ -10,5 +10,6 @@ namespace Assignment_Server.Interfaces
         Category AddCategory(Category category);
         Category UpdateCategory(Category category);
         void DeleteCategory(int id);
+        List<Category> SearchName(string name);
     }
 }
